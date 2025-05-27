@@ -21,8 +21,32 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
+				serif: ['Playfair Display', 'serif'],
 			},
 			colors: {
+				cream: {
+					50: '#FEFCF8',
+					100: '#FDF6E3',
+					200: '#FAF7F0',
+					300: '#F5F0E8',
+					400: '#F0E9DC',
+					500: '#EAE2D0',
+				},
+				sage: {
+					600: '#2D5016',
+					700: '#1F3610',
+					800: '#152608',
+				},
+				earth: {
+					600: '#8B4513',
+					700: '#654321',
+					800: '#3E2A13',
+				},
+				gold: {
+					400: '#F4D03F',
+					500: '#D4AF37',
+					600: '#B7950B',
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -88,11 +112,33 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'slide-up': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(30px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.6s ease-out',
+				'slide-up': 'slide-up 0.8s ease-out'
 			}
 		}
 	},
