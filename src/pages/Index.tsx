@@ -4,8 +4,9 @@ import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
 import AboutSection from '../components/AboutSection';
 import SearchSection from '../components/SearchSection';
-import ProductListings from '../components/ProductListings';
+import CategoriesSection from '../components/CategoriesSection';
 import FeaturesSection from '../components/FeaturesSection';
+import FeaturedListings from '../components/FeaturedListings';
 import HowItWorks from '../components/HowItWorks';
 import TestimonialsSection from '../components/TestimonialsSection';
 import CallToActionSection from '../components/CallToActionSection';
@@ -14,13 +15,14 @@ import Footer from '../components/Footer';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-cream-100">
       <Header />
       <HeroSection />
       <AboutSection />
       <SearchSection />
-      <ProductListings />
+      <CategoriesSection />
       <FeaturesSection />
+      <FeaturedListings />
       <HowItWorks />
       <TestimonialsSection />
       <CallToActionSection />
