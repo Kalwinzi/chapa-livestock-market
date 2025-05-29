@@ -10,6 +10,7 @@ import FeaturedListings from '../components/FeaturedListings';
 import HowItWorks from '../components/HowItWorks';
 import TestimonialsSection from '../components/TestimonialsSection';
 import CallToActionSection from '../components/CallToActionSection';
+import PrivacyTermsSection from '../components/PrivacyTermsSection';
 import ContactUs from '../components/ContactUs';
 import Footer from '../components/Footer';
 
@@ -26,6 +27,7 @@ const Index = () => {
       <HowItWorks />
       <TestimonialsSection />
       <CallToActionSection />
+      <PrivacyTermsSection />
       <ContactUs />
       <Footer />
     </div>
