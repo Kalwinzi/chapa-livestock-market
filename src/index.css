@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -55,6 +56,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-display: swap; /* Optimize font loading */
   }
 }
 
@@ -128,6 +130,15 @@
     transform: scale(1.05);
   }
   
+  /* Performance optimizations */
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-float,
+  .animate-pulse-soft,
+  .animate-bounce-soft {
+    will-change: transform, opacity;
+  }
+  
   /* Mobile-first animations */
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in,
@@ -145,7 +156,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
+/* Optimized scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -162,7 +173,7 @@ html {
   @apply bg-primary-500;
 }
 
-/* Scroll-triggered animations */
+/* Enhanced Animations */
 @keyframes slideInFromBottom {
   from {
     opacity: 0;
@@ -207,7 +218,7 @@ html {
   }
 }
 
-/* Enhanced animations for better UX */
+/* Enhanced slide down animation */
 @keyframes slide-down {
   from {
     opacity: 0;
@@ -223,7 +234,7 @@ html {
   animation: slide-down 0.3s ease-out;
 }
 
-/* Improved float animation */
+/* Improved float animation with better performance */
 @keyframes float-enhanced {
   0%, 100% {
     transform: translateY(0px);
@@ -253,7 +264,7 @@ html {
   animation: pulse-soft-enhanced 2s ease-in-out infinite;
 }
 
-/* Bounce animation for scroll indicator */
+/* Enhanced bounce animation */
 @keyframes bounce-soft-enhanced {
   0%, 100% {
     transform: translateY(0);
@@ -269,6 +280,52 @@ html {
   animation: bounce-soft-enhanced 2s infinite;
 }
 
+/* Fade in animation with stagger support */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* Loading animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Card animations with improved performance */
+.card-enter {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
 /* RTL support for Arabic */
 [dir="rtl"] .gradient-text {
   background: linear-gradient(to left, hsl(var(--primary)), hsl(var(--accent)));
@@ -280,7 +337,7 @@ html {
   @apply flex-row-reverse;
 }
 
-/* Mobile-first responsive improvements */
+/* Mobile optimizations */
 @media (max-width: 640px) {
   .animate-on-scroll {
     transform: translateY(20px);
@@ -289,12 +346,27 @@ html {
   .container-custom {
     @apply px-4;
   }
+  
+  /* Reduce motion on mobile for performance */
+  .card-hover:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
 }
 
-/* Improved performance with will-change */
-.animate-fade-in,
-.animate-slide-up,
-.animate-float,
-.hover\:scale-105:hover {
-  will-change: transform, opacity;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass-effect {
+    @apply bg-white border-2 border-black;
+  }
+}
+
+/* Optimize for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:scale-105:hover {
+    transform: none;
+  }
+  
+  .card-hover:hover {
+    transform: none;
+  }
 }
