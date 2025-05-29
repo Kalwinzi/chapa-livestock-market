@@ -47,51 +47,51 @@ const HeroSection = () => {
         ></div>
       </div>
       
-      <div className="container-custom relative z-10 pt-16 lg:pt-20">
+      <div className="container-custom relative z-10 pt-8 lg:pt-12">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-6 lg:space-y-8 animate-fade-in text-center lg:text-left">
+          <div className="space-y-6 lg:space-y-8 text-center lg:text-left">
             <div className="space-y-4 lg:space-y-6">
-              <div className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full text-sm font-medium border border-primary-200 dark:border-primary-800">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full text-sm font-medium border border-primary-200 dark:border-primary-800 animate-fade-in">
                 <Shield className="w-4 h-4 mr-2" />
                 {t('hero.trusted')}
               </div>
               
-              <h1 className="text-h1 font-bold text-foreground leading-tight">
+              <h1 className="text-h1 font-bold text-foreground leading-tight animate-slide-up" style={{ animationDelay: '0.2s' }}>
                 <span className="gradient-text">{t('hero.title')}</span>
               </h1>
               
-              <p className="text-body-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              <p className="text-body-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0 animate-slide-up" style={{ animationDelay: '0.4s' }}>
                 {t('hero.subtitle')}
               </p>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button className="btn-primary text-lg px-6 lg:px-8 py-3 lg:py-4 group">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.6s' }}>
+              <Button className="btn-primary text-lg px-6 lg:px-8 py-3 lg:py-4 group transition-all duration-300 hover:scale-105 hover:shadow-xl">
                 {t('hero.browse')}
                 <MapPin className="ml-2 h-5 w-5 group-hover:animate-pulse" />
               </Button>
-              <Button className="btn-secondary text-lg px-6 lg:px-8 py-3 lg:py-4 group">
+              <Button className="btn-secondary text-lg px-6 lg:px-8 py-3 lg:py-4 group transition-all duration-300 hover:scale-105">
                 <Play className="mr-2 h-5 w-5" />
                 {t('hero.demo')}
               </Button>
             </div>
             
             {/* Trust Indicators */}
-            <div className="grid grid-cols-3 gap-4 lg:gap-8 pt-6 lg:pt-8 border-t border-border">
-              <div className="text-center">
+            <div className="grid grid-cols-3 gap-4 lg:gap-8 pt-6 lg:pt-8 border-t border-border animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              <div className="text-center transform hover:scale-105 transition-transform duration-300">
                 <div className="text-2xl lg:text-3xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.farmers.toLocaleString()}+
                 </div>
                 <div className="text-xs lg:text-sm text-muted-foreground">{t('hero.farmers')}</div>
               </div>
-              <div className="text-center">
+              <div className="text-center transform hover:scale-105 transition-transform duration-300">
                 <div className="text-2xl lg:text-3xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.livestock.toLocaleString()}+
                 </div>
                 <div className="text-xs lg:text-sm text-muted-foreground">{t('hero.livestock')}</div>
               </div>
-              <div className="text-center">
+              <div className="text-center transform hover:scale-105 transition-transform duration-300">
                 <div className="text-2xl lg:text-3xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.countries}
                 </div>
@@ -101,10 +101,10 @@ const HeroSection = () => {
           </div>
           
           {/* Right Content - Hero Image */}
-          <div className="relative animate-slide-up lg:animate-fade-in mt-8 lg:mt-0" style={{ animationDelay: '0.3s' }}>
-            <div className="relative">
+          <div className="relative mt-8 lg:mt-0" style={{ animationDelay: '0.3s' }}>
+            <div className="relative animate-float">
               {/* Main Image */}
-              <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
                 <img
                   src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=600&h=500&fit=crop"
                   alt="African livestock farming"
@@ -115,7 +115,7 @@ const HeroSection = () => {
               </div>
               
               {/* Floating Cards */}
-              <div className="absolute -top-2 -left-2 lg:-top-4 lg:-left-4 bg-card p-3 lg:p-4 rounded-xl shadow-lg animate-float border border-border">
+              <div className="absolute -top-2 -left-2 lg:-top-4 lg:-left-4 bg-card p-3 lg:p-4 rounded-xl shadow-lg border border-border transform hover:scale-110 transition-all duration-300 animate-fade-in" style={{ animationDelay: '1s' }}>
                 <div className="flex items-center space-x-2 lg:space-x-3">
                   <div className="w-8 h-8 lg:w-12 lg:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
                     <Users className="w-4 h-4 lg:w-6 lg:h-6 text-primary-500" />
@@ -127,7 +127,7 @@ const HeroSection = () => {
                 </div>
               </div>
               
-              <div className="absolute -bottom-4 -right-2 lg:-bottom-6 lg:-right-6 bg-accent-500 p-3 lg:p-4 rounded-xl shadow-lg animate-float" style={{ animationDelay: '1s' }}>
+              <div className="absolute -bottom-4 -right-2 lg:-bottom-6 lg:-right-6 bg-accent-500 p-3 lg:p-4 rounded-xl shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in" style={{ animationDelay: '1.2s' }}>
                 <div className="text-center">
                   <div className="text-lg lg:text-2xl font-bold text-white">₦2.5M</div>
                   <div className="text-xs lg:text-sm text-white/90">Monthly Sales</div>
