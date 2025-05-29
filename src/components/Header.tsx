@@ -14,8 +14,27 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, toggleTheme, language, setLanguage, t } = useTheme();
 
+  const languageOptions = [
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'Français' },
+    { code: 'ar', name: 'العربية' },
+    { code: 'pt', name: 'Português' },
+    { code: 'sw', name: 'Kiswahili' }
+  ];
+
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm shadow-lg border-b border-border">
+      {/* Trust Banner */}
+      <div className="bg-primary-600 dark:bg-primary-700 text-white py-2">
+        <div className="container-custom">
+          <div className="text-center">
+            <p className="text-sm font-medium animate-fade-in">
+              {t('hero.trusted')}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -51,18 +70,21 @@ const Header = () => {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="border-border">
+                <Button variant="outline" size="sm" className="border-border hover:scale-105 transition-transform">
                   <Globe className="h-4 w-4 mr-2" />
-                  {language.toUpperCase()}
+                  {languageOptions.find(lang => lang.code === language)?.name || 'EN'}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setLanguage('en')}>
-                  English
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage('ha')}>
-                  Hausa
-                </DropdownMenuItem>
+                {languageOptions.map((lang) => (
+                  <DropdownMenuItem 
+                    key={lang.code} 
+                    onClick={() => setLanguage(lang.code as any)}
+                    className="hover:bg-accent transition-colors"
+                  >
+                    {lang.name}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -71,16 +93,16 @@ const Header = () => {
               variant="outline"
               size="sm"
               onClick={toggleTheme}
-              className="border-border"
+              className="border-border hover:scale-105 transition-transform"
             >
               {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
             </Button>
 
-            <Button variant="outline" size="sm" className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white">
+            <Button variant="outline" size="sm" className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white hover:scale-105 transition-all">
               <UserPlus className="h-4 w-4 mr-2" />
               {t('nav.signup')}
             </Button>
-            <Button size="sm" className="btn-primary">
+            <Button size="sm" className="btn-primary hover:scale-105 transition-transform">
               {t('nav.list')}
             </Button>
           </div>
@@ -108,7 +130,7 @@ const Header = () => {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden">
+          <div className="md:hidden animate-slide-down">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-card border-t border-border rounded-b-lg shadow-lg">
               <a href="#home" className="text-foreground hover:text-primary-500 block px-3 py-2 rounded-md text-base font-medium hover:bg-accent transition-colors">
                 {t('nav.home')}
@@ -132,22 +154,24 @@ const Header = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="w-full border-border">
                       <Globe className="h-4 w-4 mr-2" />
-                      {language.toUpperCase()}
+                      {languageOptions.find(lang => lang.code === language)?.name || 'EN'}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setLanguage('en')}>
-                      English
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setLanguage('ha')}>
-                      Hausa
-                    </DropdownMenuItem>
+                    {languageOptions.map((lang) => (
+                      <DropdownMenuItem 
+                        key={lang.code} 
+                        onClick={() => setLanguage(lang.code as any)}
+                      >
+                        {lang.name}
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
               
               <div className="px-3 py-2 space-y-2">
-                <Button variant="outline" size="sm" className="w-full border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white">
+                <Button variant="outline" size="sm" className="w-full border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all">
                   <UserPlus className="h-4 w-4 mr-2" />
                   {t('nav.signup')}
                 </Button>

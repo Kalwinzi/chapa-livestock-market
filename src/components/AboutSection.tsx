@@ -3,8 +3,8 @@ import React from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const AboutSection = () => {
-  const { elementRef: titleRef, isVisible: titleVisible } = useScrollAnimation();
-  const { elementRef: contentRef, isVisible: contentVisible } = useScrollAnimation();
+  const { elementRef: titleRef, isVisible: titleVisible } = useScrollAnimation<HTMLHeadingElement>();
+  const { elementRef: contentRef, isVisible: contentVisible } = useScrollAnimation<HTMLDivElement>();
 
   return (
     <section id="about" className="py-12 lg:py-20 bg-cream-50 dark:bg-gray-900/50">

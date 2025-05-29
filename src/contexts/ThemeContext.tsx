@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
-type Language = 'en' | 'ha'; // English and Hausa
+type Language = 'en' | 'fr' | 'ar' | 'pt' | 'sw'; // English, French, Arabic, Portuguese, Swahili
 
 interface ThemeContextType {
   theme: Theme;
@@ -30,22 +30,73 @@ const translations = {
     'nav.signup': 'Sign Up',
     'nav.list': 'List Your Livestock'
   },
-  ha: {
-    'hero.title': 'Saya da Sayar da Kyawawan Dabbobi A Duk Afirka',
-    'hero.subtitle': 'Haɗu da manoman da \'yan kasuwa da aka tabbata. Nemo dabbobi masu inganci da tsaro, biyan kuɗi, da tabbatar da ƙwararru.',
-    'hero.browse': 'Bincika Dabbobi',
-    'hero.demo': 'Kalli Demo',
-    'hero.farmers': 'Manoma Da Aka Haɗa',
-    'hero.livestock': 'Dabbobi Da Aka Jera',
-    'hero.countries': 'Ƙasashe',
-    'hero.trusted': 'Mafi Aminci Dabbobi Platform A Afirka',
-    'nav.home': 'Gida',
-    'nav.about': 'Game Da Mu',
-    'nav.features': 'Abubuwan Da Muke',
-    'nav.how': 'Yadda Ake Yi',
-    'nav.contact': 'Tuntuɓe Mu',
-    'nav.signup': 'Shiga',
-    'nav.list': 'Jera Dabbobin Ka'
+  fr: {
+    'hero.title': 'Acheter et Vendre du Bétail Premium à Travers l\'Afrique',
+    'hero.subtitle': 'Connectez-vous avec des agriculteurs et commerçants vérifiés. Trouvez du bétail de qualité avec des paiements sécurisés et une vérification experte.',
+    'hero.browse': 'Parcourir le Bétail',
+    'hero.demo': 'Voir la Démo',
+    'hero.farmers': 'Agriculteurs Connectés',
+    'hero.livestock': 'Bétail Répertorié',
+    'hero.countries': 'Pays',
+    'hero.trusted': 'Plateforme de Bétail la Plus Fiable d\'Afrique',
+    'nav.home': 'Accueil',
+    'nav.about': 'À Propos',
+    'nav.features': 'Fonctionnalités',
+    'nav.how': 'Comment Ça Marche',
+    'nav.contact': 'Contact',
+    'nav.signup': 'S\'inscrire',
+    'nav.list': 'Lister Votre Bétail'
+  },
+  ar: {
+    'hero.title': 'شراء وبيع الماشية المتميزة عبر أفريقيا',
+    'hero.subtitle': 'تواصل مع المزارعين والتجار المعتمدين. اعثر على الماشية عالية الجودة مع المدفوعات الآمنة والتحقق من الخبراء.',
+    'hero.browse': 'تصفح الماشية',
+    'hero.demo': 'مشاهدة العرض التوضيحي',
+    'hero.farmers': 'المزارعون المتصلون',
+    'hero.livestock': 'الماشية المدرجة',
+    'hero.countries': 'البلدان',
+    'hero.trusted': 'منصة الماشية الأكثر موثوقية في أفريقيا',
+    'nav.home': 'الرئيسية',
+    'nav.about': 'حولنا',
+    'nav.features': 'الميزات',
+    'nav.how': 'كيف يعمل',
+    'nav.contact': 'اتصل بنا',
+    'nav.signup': 'التسجيل',
+    'nav.list': 'أدرج ماشيتك'
+  },
+  pt: {
+    'hero.title': 'Comprar e Vender Gado Premium em Toda a África',
+    'hero.subtitle': 'Conecte-se com agricultores e comerciantes verificados. Encontre gado de qualidade com pagamentos seguros e verificação especializada.',
+    'hero.browse': 'Explorar Gado',
+    'hero.demo': 'Ver Demo',
+    'hero.farmers': 'Agricultores Conectados',
+    'hero.livestock': 'Gado Listado',
+    'hero.countries': 'Países',
+    'hero.trusted': 'Plataforma de Gado Mais Confiável da África',
+    'nav.home': 'Início',
+    'nav.about': 'Sobre',
+    'nav.features': 'Recursos',
+    'nav.how': 'Como Funciona',
+    'nav.contact': 'Contato',
+    'nav.signup': 'Cadastrar',
+    'nav.list': 'Listar Seu Gado'
+  },
+  sw: {
+    'hero.title': 'Nunua na Uza Mifugo Bora Kote Afrika',
+    'hero.subtitle': 'Unganisha na wakulima na wafanyabiashara walioidhinishwa. Pata mifugo ya ubora na malipo salama na uthibitisho wa wataalamu.',
+    'hero.browse': 'Tazama Mifugo',
+    'hero.demo': 'Ona Onyesho',
+    'hero.farmers': 'Wakulima Wameunganishwa',
+    'hero.livestock': 'Mifugo Iliyoorodheshwa',
+    'hero.countries': 'Nchi',
+    'hero.trusted': 'Jukwaa la Mifugo Linalotegemewa Zaidi Afrika',
+    'nav.home': 'Nyumbani',
+    'nav.about': 'Kuhusu',
+    'nav.features': 'Vipengele',
+    'nav.how': 'Jinsi Inavyofanya Kazi',
+    'nav.contact': 'Wasiliana',
+    'nav.signup': 'Jisajili',
+    'nav.list': 'Orodhesha Mifugo Yako'
   }
 };
 
@@ -70,6 +121,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     localStorage.setItem('language', language);
+    // Set RTL for Arabic
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
   const toggleTheme = () => {
