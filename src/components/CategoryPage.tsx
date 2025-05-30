@@ -1,26 +1,50 @@
 
-import React from 'react';
-import { MapPin, ShoppingCart, Eye, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, ShoppingCart, Eye, Heart, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { Input } from '@/components/ui/input';
+import { getLivestockByCategory, LivestockItem } from '@/data/livestockData';
 import { useToast } from '@/hooks/use-toast';
-import { getFeaturedLivestock, allLivestockData } from '@/data/livestockData';
 
-const FeaturedListings = () => {
-  const { elementRef: titleRef, isVisible: titleVisible } = useScrollAnimation<HTMLHeadingElement>();
-  const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation<HTMLDivElement>();
+interface CategoryPageProps {
+  category: string;
+}
+
+const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
+  const [listings] = useState<LivestockItem[]>(getLivestockByCategory(category));
+  const [filteredListings, setFilteredListings] = useState<LivestockItem[]>(listings);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [priceFilter, setPriceFilter] = useState('');
+  const [genderFilter, setGenderFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   const { toast } = useToast();
 
-  const featuredListings = getFeaturedLivestock();
+  const applyFilters = () => {
+    let filtered = listings;
 
-  const handleLocationClick = (location: string) => {
-    toast({
-      title: "Location Selected",
-      description: `Showing livestock near ${location}. Map feature coming soon!`,
-    });
+    if (searchQuery) {
+      filtered = filtered.filter(item => 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.details.breed.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (genderFilter) {
+      filtered = filtered.filter(item => item.details.gender === genderFilter);
+    }
+
+    if (typeFilter) {
+      filtered = filtered.filter(item => item.details.type === typeFilter);
+    }
+
+    setFilteredListings(filtered);
   };
 
-  const handleContactSeller = (item: any) => {
+  React.useEffect(() => {
+    applyFilters();
+  }, [searchQuery, genderFilter, typeFilter]);
+
+  const handleContactSeller = (item: LivestockItem) => {
     const message = `Hello, I'm interested in your ${item.name} (${item.details.breed}, ${item.details.age}, ${item.details.gender}) listed at ${item.price}. Please provide more details.`;
     const whatsappUrl = `https://wa.me/${item.seller.whatsapp.replace('+', '')}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -31,59 +55,78 @@ const FeaturedListings = () => {
     });
   };
 
-  const handleViewDetails = (item: any) => {
+  const handleViewDetails = (item: LivestockItem) => {
     toast({
       title: "Livestock Details",
-      description: `${item.name} - Breed: ${item.details.breed}, Age: ${item.details.age}, Gender: ${item.details.gender}, Type: ${item.details.type}, Weight: ${item.details.weight || 'N/A'}. Seller: ${item.seller.name} (${item.seller.phone}) - ${item.seller.description}`,
+      description: `${item.name} - Breed: ${item.details.breed}, Age: ${item.details.age}, Gender: ${item.details.gender}, Type: ${item.details.type}. Seller: ${item.seller.name} (${item.seller.phone})`,
     });
   };
 
-  const handleFavorite = (item: any) => {
+  const handleFavorite = (item: LivestockItem) => {
     toast({
       title: "Added to Favorites",
       description: `${item.name} saved to your favorites`,
     });
   };
 
-  const handleViewMore = () => {
-    toast({
-      title: "View More Listings",
-      description: `Showing all ${allLivestockData.length} available livestock listings`,
-    });
-  };
-
   return (
-    <section id="listings" className="py-16 bg-accent-50 dark:bg-gray-900/50">
+    <div className="min-h-screen bg-background py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="text-center mb-12">
-          <h2 
-            ref={titleRef}
-            className={`text-3xl md:text-4xl font-bold text-foreground mb-4 transition-all duration-700 ${
-              titleVisible 
-                ? 'opacity-100 translate-y-0' 
-                : 'opacity-0 translate-y-8'
-            }`}
-          >
-            Featured Livestock from Tanzania
-          </h2>
-          <p className={`text-muted-foreground max-w-2xl mx-auto transition-all duration-700 delay-200 ${
-            titleVisible 
-              ? 'opacity-100 translate-y-0' 
-              : 'opacity-0 translate-y-8'
-          }`}>
-            Discover high-quality livestock from verified sellers across Tanzania
+          <h1 className="text-4xl font-bold text-foreground mb-4">{category} Listings</h1>
+          <p className="text-muted-foreground mb-8">
+            Browse {filteredListings.length} verified {category.toLowerCase()} from trusted sellers
           </p>
         </div>
-        
-        <div 
-          ref={gridRef}
-          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-700 delay-300 ${
-            gridVisible 
-              ? 'opacity-100 translate-y-0' 
-              : 'opacity-0 translate-y-8'
-          }`}
-        >
-          {featuredListings.map((listing) => (
+
+        {/* Filters */}
+        <div className="bg-card rounded-2xl shadow-lg p-6 mb-8 border border-border">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search by name or breed..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-4"
+              />
+            </div>
+            
+            <select
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+              className="h-10 w-full border border-input bg-background text-foreground rounded-md px-3"
+            >
+              <option value="">All Genders</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="h-10 w-full border border-input bg-background text-foreground rounded-md px-3"
+            >
+              <option value="">All Types</option>
+              <option value="Kienyeji">Kienyeji (Local)</option>
+              <option value="Kisasa">Kisasa (Improved)</option>
+              <option value="Mixed">Mixed</option>
+            </select>
+
+            <Button 
+              onClick={applyFilters}
+              className="bg-primary-500 hover:bg-primary-600"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Apply Filters
+            </Button>
+          </div>
+        </div>
+
+        {/* Listings Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredListings.map((listing) => (
             <div key={listing.id} className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-border">
               <div className="relative">
                 <img
@@ -119,13 +162,10 @@ const FeaturedListings = () => {
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-foreground mb-2">{listing.name}</h3>
                 
-                <button 
-                  onClick={() => handleLocationClick(listing.location)}
-                  className="flex items-center text-muted-foreground mb-2 hover:text-primary-500 transition-colors"
-                >
+                <div className="flex items-center text-muted-foreground mb-2">
                   <MapPin className="h-4 w-4 mr-1" />
                   <span className="text-sm">{listing.location}</span>
-                </button>
+                </div>
                 
                 <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
                   <div>
@@ -171,20 +211,26 @@ const FeaturedListings = () => {
             </div>
           ))}
         </div>
-        
-        <div className="text-center mt-12">
-          <Button 
-            size="lg" 
-            variant="outline" 
-            className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all duration-300 hover:scale-105"
-            onClick={handleViewMore}
-          >
-            View More Listings ({allLivestockData.length}+ Available)
-          </Button>
-        </div>
+
+        {filteredListings.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg">No livestock found matching your criteria.</p>
+            <Button 
+              onClick={() => {
+                setSearchQuery('');
+                setGenderFilter('');
+                setTypeFilter('');
+              }}
+              className="mt-4"
+              variant="outline"
+            >
+              Clear Filters
+            </Button>
+          </div>
+        )}
       </div>
-    </section>
+    </div>
   );
 };
 
-export default FeaturedListings;
+export default CategoryPage;
