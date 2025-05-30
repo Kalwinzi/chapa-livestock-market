@@ -114,6 +114,44 @@ const HeroSection = () => {
                 <div className="text-xs sm:text-sm text-muted-foreground">{t('hero.countries')}</div>
               </div>
             </div>
+
+            {/* New Promotional Content */}
+            <div className={`mt-8 p-6 bg-accent-50 dark:bg-accent-900/20 rounded-2xl border border-accent-200 dark:border-accent-800 transition-all duration-1000 delay-1000 ${
+              heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-foreground">Why Choose ChapaMarket?</h3>
+                <div className="flex space-x-1">
+                  {['🐄', '🐐', '🐑', '🐔', '🐷'].map((emoji, i) => (
+                    <span 
+                      key={i} 
+                      className="text-2xl animate-bounce" 
+                      style={{ animationDelay: `${i * 0.1}s`, animationDuration: '2s' }}
+                    >
+                      {emoji}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-muted-foreground">Verified Sellers</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-muted-foreground">Secure Payments</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-muted-foreground">Quality Livestock</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-muted-foreground">Expert Support</span>
+                </div>
+              </div>
+            </div>
           </div>
           
           {/* Right Content - Hero Image */}

@@ -62,8 +62,8 @@ export const generateLivestockData = (): LivestockItem[] => {
       details: {
         breed: ['Boer', 'Saanen', 'Toggenburg', 'Alpine', 'Nubian', 'Local'][i % 6],
         age: `${Math.floor(Math.random() * 3 + 1)} years`,
-        gender: i % 2 === 0 ? 'Male' : 'Female',
-        type: i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed',
+        gender: (i % 2 === 0 ? 'Male' : 'Female') as 'Male' | 'Female',
+        type: (i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed') as 'Kienyeji' | 'Kisasa' | 'Mixed',
         weight: `${Math.floor(Math.random() * 30 + 20)}kg`,
         health: 'Excellent'
       },
@@ -94,8 +94,8 @@ export const generateLivestockData = (): LivestockItem[] => {
       details: {
         breed: ['Holstein', 'Friesian', 'Zebu', 'Ankole', 'Boran', 'Sahiwal'][i % 6],
         age: `${Math.floor(Math.random() * 4 + 2)} years`,
-        gender: i % 2 === 0 ? 'Male' : 'Female',
-        type: i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed',
+        gender: (i % 2 === 0 ? 'Male' : 'Female') as 'Male' | 'Female',
+        type: (i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed') as 'Kienyeji' | 'Kisasa' | 'Mixed',
         weight: `${Math.floor(Math.random() * 200 + 300)}kg`,
         health: 'Excellent'
       },
@@ -125,8 +125,8 @@ export const generateLivestockData = (): LivestockItem[] => {
       details: {
         breed: ['Dorper', 'Black Head Persian', 'Red Maasai', 'Merino'][i % 4],
         age: `${Math.floor(Math.random() * 2 + 1)} years`,
-        gender: i % 2 === 0 ? 'Male' : 'Female',
-        type: i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed',
+        gender: (i % 2 === 0 ? 'Male' : 'Female') as 'Male' | 'Female',
+        type: (i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed') as 'Kienyeji' | 'Kisasa' | 'Mixed',
         weight: `${Math.floor(Math.random() * 20 + 25)}kg`,
         health: 'Excellent'
       },
@@ -154,8 +154,8 @@ export const generateLivestockData = (): LivestockItem[] => {
       details: {
         breed: ['Kuroiler', 'Layers', 'Broilers', 'Local Chicken', 'Ducks'][i % 5],
         age: `${Math.floor(Math.random() * 12 + 3)} months`,
-        gender: i % 2 === 0 ? 'Male' : 'Female',
-        type: i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed',
+        gender: (i % 2 === 0 ? 'Male' : 'Female') as 'Male' | 'Female',
+        type: (i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed') as 'Kienyeji' | 'Kisasa' | 'Mixed',
         health: 'Excellent'
       },
       verified: true,
@@ -182,8 +182,8 @@ export const generateLivestockData = (): LivestockItem[] => {
       details: {
         breed: ['Large White', 'Landrace', 'Duroc', 'Hampshire'][i % 4],
         age: `${Math.floor(Math.random() * 2 + 1)} years`,
-        gender: i % 2 === 0 ? 'Male' : 'Female',
-        type: i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed',
+        gender: (i % 2 === 0 ? 'Male' : 'Female') as 'Male' | 'Female',
+        type: (i % 3 === 0 ? 'Kienyeji' : i % 3 === 1 ? 'Kisasa' : 'Mixed') as 'Kienyeji' | 'Kisasa' | 'Mixed',
         weight: `${Math.floor(Math.random() * 50 + 50)}kg`,
         health: 'Excellent'
       },
