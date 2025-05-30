@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Menu, UserPlus, Moon, Sun, Globe, X } from 'lucide-react';
+import { Menu, UserPlus, Moon, Sun, Globe, X, Search, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
 import {
@@ -30,6 +30,7 @@ const Header = () => {
 
   const handleNavClick = (href: string) => {
     setIsMenuOpen(false);
+    setIsMobileMenuOpen(false);
     // Smooth scroll to section
     const element = document.querySelector(href);
     if (element) {
@@ -40,7 +41,7 @@ const Header = () => {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
-        <div className="container-custom">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-2">
@@ -60,11 +61,11 @@ const Header = () => {
               <a href="#about" onClick={(e) => { e.preventDefault(); handleNavClick('#about'); }} className="text-sm font-medium text-foreground hover:text-primary-500 px-3 py-2 rounded-md transition-all duration-300 hover:bg-accent">
                 {t('nav.about')}
               </a>
+              <a href="#categories" onClick={(e) => { e.preventDefault(); handleNavClick('#categories'); }} className="text-sm font-medium text-foreground hover:text-primary-500 px-3 py-2 rounded-md transition-all duration-300 hover:bg-accent">
+                Categories
+              </a>
               <a href="#features" onClick={(e) => { e.preventDefault(); handleNavClick('#features'); }} className="text-sm font-medium text-foreground hover:text-primary-500 px-3 py-2 rounded-md transition-all duration-300 hover:bg-accent">
                 {t('nav.features')}
-              </a>
-              <a href="#how-it-works" onClick={(e) => { e.preventDefault(); handleNavClick('#how-it-works'); }} className="text-sm font-medium text-foreground hover:text-primary-500 px-3 py-2 rounded-md transition-all duration-300 hover:bg-accent">
-                {t('nav.how')}
               </a>
               <a href="#contact" onClick={(e) => { e.preventDefault(); handleNavClick('#contact'); }} className="text-sm font-medium text-foreground hover:text-primary-500 px-3 py-2 rounded-md transition-all duration-300 hover:bg-accent">
                 {t('nav.contact')}
@@ -73,6 +74,17 @@ const Header = () => {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-4">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                <Search className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={toggleTheme}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
               <NotificationSystem />
               <Button 
                 onClick={() => setShowAdmin(true)}
@@ -82,14 +94,25 @@ const Header = () => {
               >
                 Admin
               </Button>
-              <Button variant="outline" size="sm">Sign In</Button>
-              <Button size="sm" className="bg-primary-500 hover:bg-primary-600">
+              <Button variant="outline" size="sm" onClick={() => setIsSignUpOpen(true)}>Sign In</Button>
+              <Button size="sm" className="bg-primary-500 hover:bg-primary-600" onClick={() => setIsSignUpOpen(true)}>
                 Get Started
               </Button>
             </div>
 
             {/* Mobile Menu Button */}
             <div className="lg:hidden flex items-center space-x-2">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                <Search className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={toggleTheme}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
               <NotificationSystem />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -124,18 +147,18 @@ const Header = () => {
                   {t('nav.about')}
                 </a>
                 <a 
+                  href="#categories" 
+                  onClick={(e) => { e.preventDefault(); handleNavClick('#categories'); }} 
+                  className="text-foreground hover:text-primary-500 block px-3 py-3 rounded-md text-base font-medium hover:bg-accent transition-colors"
+                >
+                  Categories
+                </a>
+                <a 
                   href="#features" 
                   onClick={(e) => { e.preventDefault(); handleNavClick('#features'); }} 
                   className="text-foreground hover:text-primary-500 block px-3 py-3 rounded-md text-base font-medium hover:bg-accent transition-colors"
                 >
                   {t('nav.features')}
-                </a>
-                <a 
-                  href="#how-it-works" 
-                  onClick={(e) => { e.preventDefault(); handleNavClick('#how-it-works'); }} 
-                  className="text-foreground hover:text-primary-500 block px-3 py-3 rounded-md text-base font-medium hover:bg-accent transition-colors"
-                >
-                  {t('nav.how')}
                 </a>
                 <a 
                   href="#contact" 
@@ -171,7 +194,7 @@ const Header = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={() => {setIsSignUpOpen(true); setIsMenuOpen(false);}}
+                    onClick={() => {setIsSignUpOpen(true); setIsMobileMenuOpen(false);}}
                     className="w-full border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all"
                   >
                     <UserPlus className="h-4 w-4 mr-2" />

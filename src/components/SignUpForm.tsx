@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,7 +36,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ isOpen, onClose }) => {
     
     toast({
       title: "Registration Successful!",
-      description: "Welcome to ChapaMarket! Please check your email for verification.",
+      description: "Welcome to ChapaMarket! A confirmation email has been sent to your inbox.",
     });
     
     setFormData({
@@ -51,6 +50,13 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ isOpen, onClose }) => {
       userType: 'buyer'
     });
     onClose();
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    toast({
+      title: `${provider} Login`,
+      description: `${provider} authentication will be implemented with full backend integration.`,
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -77,6 +83,40 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ isOpen, onClose }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Social Login Buttons */}
+          <div className="space-y-3 mb-6">
+            <Button 
+              onClick={() => handleSocialLogin('Google')}
+              variant="outline" 
+              className="w-full flex items-center justify-center space-x-2 border-gray-300 hover:bg-gray-50"
+            >
+              <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                G
+              </div>
+              <span>Continue with Google</span>
+            </Button>
+            
+            <Button 
+              onClick={() => handleSocialLogin('Facebook')}
+              variant="outline" 
+              className="w-full flex items-center justify-center space-x-2 border-blue-300 hover:bg-blue-50"
+            >
+              <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                f
+              </div>
+              <span>Continue with Facebook</span>
+            </Button>
+          </div>
+
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
