@@ -63,4 +63,11 @@ export const ListingSkeleton = () => {
   );
 };
 
+// Default export component that can be used when importing SkeletonLoader
+const SkeletonLoader = {
+  LivestockCard: LivestockCardSkeleton,
+  Category: CategorySkeleton,
+  Listing: ListingSkeleton
+};
+
 export default SkeletonLoader;
