@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowDown, MapPin, Users, Shield, Play } from 'lucide-react';
+import { ArrowDown, MapPin, Users, Shield, Play, UserPlus } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
