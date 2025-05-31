@@ -8,6 +8,7 @@ import CategoriesSection from '../components/CategoriesSection';
 import FeaturesSection from '../components/FeaturesSection';
 import FeaturedListings from '../components/FeaturedListings';
 import HowItWorksSimple from '../components/HowItWorksSimple';
+import StoriesSection from '../components/StoriesSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 import CallToActionSection from '../components/CallToActionSection';
 import PrivacyTermsSection from '../components/PrivacyTermsSection';
@@ -26,6 +27,7 @@ const Index = () => {
         <FeaturesSection />
         <FeaturedListings />
         <HowItWorksSimple />
+        <StoriesSection />
         <TestimonialsSection />
         <CallToActionSection />
         <PrivacyTermsSection />

@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MapPin, Heart, Eye } from 'lucide-react';
+import { ArrowLeft, MapPin, Heart, Eye, MessageCircle, Wallet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { allLivestockData } from '@/data/livestockData';
 import BuyerContactForm from './BuyerContactForm';
+import ChatSystem from './ChatSystem';
+import PiCoinPayment from './PiCoinPayment';
 
 interface CategoryPageProps {
   category: string;
@@ -14,6 +16,10 @@ interface CategoryPageProps {
 const CategoryPage: React.FC<CategoryPageProps> = ({ category, onBack }) => {
   const [selectedLivestock, setSelectedLivestock] = useState<any>(null);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isPiPaymentOpen, setIsPiPaymentOpen] = useState(false);
+  const [chatLivestock, setChatLivestock] = useState<any>(null);
+  const [paymentLivestock, setPaymentLivestock] = useState<any>(null);
   const { toast } = useToast();
 
   // Filter livestock by category
@@ -25,6 +31,16 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category, onBack }) => {
   const handleContactSeller = (item: any) => {
     setSelectedLivestock(item);
     setIsContactFormOpen(true);
+  };
+
+  const handleStartChat = (item: any) => {
+    setChatLivestock(item);
+    setIsChatOpen(true);
+  };
+
+  const handlePiPayment = (item: any) => {
+    setPaymentLivestock(item);
+    setIsPiPaymentOpen(true);
   };
 
   const handleViewDetails = (item: any) => {
@@ -140,13 +156,32 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category, onBack }) => {
                       </div>
                     </div>
                     
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mb-4">
                       <div className="text-2xl font-bold text-primary-500">{listing.price}</div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2">
                       <Button 
                         onClick={() => handleContactSeller(listing)}
-                        className="bg-primary-500 hover:bg-primary-600 text-white transition-all duration-300 hover:scale-105"
+                        variant="outline"
+                        className="text-sm"
                       >
                         Contact Seller
+                      </Button>
+                      <Button 
+                        onClick={() => handleStartChat(listing)}
+                        variant="outline"
+                        className="text-sm flex items-center space-x-1"
+                      >
+                        <MessageCircle className="h-3 w-3" />
+                        <span>Chat</span>
+                      </Button>
+                      <Button 
+                        onClick={() => handlePiPayment(listing)}
+                        className="bg-primary-500 hover:bg-primary-600 text-white text-sm flex items-center space-x-1 col-span-2"
+                      >
+                        <Wallet className="h-3 w-3" />
+                        <span>Pay with Pi Coin</span>
                       </Button>
                     </div>
                   </div>
@@ -174,6 +209,20 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category, onBack }) => {
         isOpen={isContactFormOpen}
         onClose={() => setIsContactFormOpen(false)}
         livestock={selectedLivestock}
+      />
+
+      <ChatSystem 
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        sellerName={chatLivestock?.seller?.name || 'Seller'}
+        livestock={chatLivestock}
+      />
+
+      <PiCoinPayment 
+        isOpen={isPiPaymentOpen}
+        onClose={() => setIsPiPaymentOpen(false)}
+        livestock={paymentLivestock}
+        amount={paymentLivestock?.price || ''}
       />
     </>
   );
