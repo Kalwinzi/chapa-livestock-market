@@ -116,7 +116,7 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Right Content - Hero Image */}
+          {/* Right Content - Hero Image with new livestock variety */}
           <div className={`relative transition-all duration-1200 delay-300 ${
             heroVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
           }`}>
@@ -124,8 +124,8 @@ const HeroSection = () => {
               {/* Main Image - Mixed livestock in Rwandan landscape */}
               <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
                 <img
-                  src="https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=800&h=600&fit=crop&crop=center"
-                  alt="Mixed livestock grazing in Rwandan landscape"
+                  src="https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=800&h=600&fit=crop&crop=center"
+                  alt="Mixed livestock including cows, goats and sheep grazing in a wide green Rwandan landscape"
                   className="w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center"
                   loading="lazy"
                 />
@@ -147,12 +147,12 @@ const HeroSection = () => {
                 </div>
               </div>
               
-              <div className={`absolute bottom-4 right-4 bg-accent-500 p-3 lg:p-4 rounded-xl shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in ${
+              <div className={`absolute bottom-4 right-4 bg-primary-500 p-3 lg:p-4 rounded-xl shadow-lg transform hover:scale-110 transition-all duration-300 animate-fade-in ${
                 heroVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
               }`} style={{ animationDelay: '1.2s' }}>
                 <div className="text-center">
-                  <div className="text-lg lg:text-2xl font-bold text-white">₦2.5M</div>
-                  <div className="text-sm text-white/90">Monthly Sales</div>
+                  <div className="text-lg lg:text-2xl font-bold text-white">Open</div>
+                  <div className="text-sm text-white/90">Every Day</div>
                 </div>
               </div>
               

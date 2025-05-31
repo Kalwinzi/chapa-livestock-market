@@ -17,13 +17,13 @@ const HowItWorksSimple = () => {
     {
       icon: Users,
       title: "Connect with Sellers",
-      description: "Get in touch with verified sellers and discuss details about the livestock you're interested in.",
+      description: "Fill out our secure contact form to get in touch with verified sellers about livestock you're interested in.",
       color: "bg-green-500"
     },
     {
       icon: Shield,
       title: "Secure Transaction",
-      description: "Complete your purchase safely with our secure payment system and buyer protection.",
+      description: "Complete your purchase safely with our verified seller network and buyer protection system.",
       color: "bg-purple-500"
     },
     {
@@ -35,9 +35,9 @@ const HowItWorksSimple = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-12 bg-accent-50 dark:bg-gray-900/50">
+    <section id="how-it-works" className="py-16 bg-accent-50 dark:bg-gray-900/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <h2 
             ref={titleRef}
             className={`text-3xl md:text-4xl font-bold text-foreground mb-4 transition-all duration-700 ${
@@ -59,7 +59,7 @@ const HowItWorksSimple = () => {
         
         <div 
           ref={gridRef}
-          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-700 delay-300 ${
+          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 transition-all duration-700 delay-300 ${
             gridVisible 
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-8'
@@ -68,21 +68,24 @@ const HowItWorksSimple = () => {
           {steps.map((step, index) => (
             <div 
               key={index}
-              className="bg-card rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 border border-border"
+              className="bg-card rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 border border-border group"
             >
-              <div className={`${step.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}>
-                <step.icon className="h-8 w-8 text-white" />
+              <div className={`${step.color} w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <step.icon className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">{step.title}</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-4">{step.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>
 
-        <div className="text-center mt-8">
-          <p className="text-muted-foreground text-sm">
-            <span className="font-semibold text-primary-500">Open 7 days a week</span> - We're here to help you find the perfect livestock
-          </p>
+        <div className="text-center mt-12">
+          <div className="inline-flex items-center px-6 py-3 bg-primary-50 dark:bg-primary-900/30 rounded-full">
+            <div className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
+            <p className="text-muted-foreground text-sm">
+              <span className="font-semibold text-primary-500">Open Every Day</span> - We're here to help you find the perfect livestock
+            </p>
+          </div>
         </div>
       </div>
     </section>
