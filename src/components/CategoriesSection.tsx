@@ -1,23 +1,29 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { livestockCategories } from '@/data/livestockData';
 import { useToast } from '@/hooks/use-toast';
+import CategoryPage from './CategoryPage';
 
 const CategoriesSection = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleCategoryClick = (categoryName: string, count: string) => {
     toast({
       title: `${categoryName} Category`,
-      description: `Browsing ${count} ${categoryName.toLowerCase()} listings. Showing filtered results below!`,
+      description: `Browsing ${count} ${categoryName.toLowerCase()} listings...`,
     });
     
-    // Scroll to featured listings section to show available livestock
-    const featuredSection = document.querySelector('#listings');
-    if (featuredSection) {
-      featuredSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    setSelectedCategory(categoryName);
   };
+
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
+  };
+
+  if (selectedCategory) {
+    return <CategoryPage category={selectedCategory} onBack={handleBackToCategories} />;
+  }
 
   return (
     <section id="categories" className="py-16 bg-background">

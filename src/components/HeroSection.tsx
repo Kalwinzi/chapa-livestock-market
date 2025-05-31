@@ -37,6 +37,20 @@ const HeroSection = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleBrowseClick = () => {
+    const categoriesSection = document.querySelector('#categories');
+    if (categoriesSection) {
+      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleDemoClick = () => {
+    const featuresSection = document.querySelector('#features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section 
       ref={heroRef}
@@ -81,11 +95,17 @@ const HeroSection = () => {
             <div className={`flex flex-col sm:flex-row gap-4 justify-center lg:justify-start transition-all duration-1000 delay-600 ${
               heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
-              <Button className="bg-primary-500 hover:bg-primary-600 text-white font-semibold text-lg px-8 py-4 group transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-lg">
+              <Button 
+                onClick={handleBrowseClick}
+                className="bg-primary-500 hover:bg-primary-600 text-white font-semibold text-lg px-8 py-4 group transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-lg"
+              >
                 {t('hero.browse')}
                 <MapPin className="ml-2 h-5 w-5 group-hover:animate-pulse" />
               </Button>
-              <Button className="bg-transparent border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-semibold text-lg px-8 py-4 group transition-all duration-300 hover:scale-105 rounded-lg">
+              <Button 
+                onClick={handleDemoClick}
+                className="bg-transparent border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-semibold text-lg px-8 py-4 group transition-all duration-300 hover:scale-105 rounded-lg"
+              >
                 <Play className="mr-2 h-5 w-5" />
                 {t('hero.demo')}
               </Button>
@@ -116,16 +136,16 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Right Content - Hero Image with new livestock variety */}
+          {/* Right Content - Hero Image with Rwandan livestock landscape */}
           <div className={`relative transition-all duration-1200 delay-300 ${
             heroVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
           }`}>
             <div className="relative animate-float">
-              {/* Main Image - Mixed livestock in Rwandan landscape */}
+              {/* Main Image - Wide green landscape with mixed livestock in Rwanda */}
               <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
                 <img
-                  src="https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=800&h=600&fit=crop&crop=center"
-                  alt="Mixed livestock including cows, goats and sheep grazing in a wide green Rwandan landscape"
+                  src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&h=600&fit=crop&crop=center"
+                  alt="Cows, goats and sheep grazing together in a wide green landscape in rural Rwanda"
                   className="w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center"
                   loading="lazy"
                 />

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Menu, UserPlus, Moon, Sun, Globe, X, Search, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useTheme } from '@/contexts/ThemeContext';
 import {
   DropdownMenu,
@@ -9,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 import SignUpForm from './SignUpForm';
 import NotificationSystem from './NotificationSystem';
 import AdminPanel from './AdminPanel';
@@ -18,7 +20,10 @@ const Header = () => {
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const { theme, toggleTheme, language, setLanguage, t } = useTheme();
+  const { toast } = useToast();
 
   const languageOptions = [
     { code: 'en', name: 'English' },
@@ -36,6 +41,25 @@ const Header = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      toast({
+        title: "Search Results",
+        description: `Searching for "${searchTerm}" in livestock listings...`,
+      });
+      setSearchTerm('');
+      setIsSearchOpen(false);
+    }
+  };
+
+  const handleSocialSignUp = (provider: string) => {
+    toast({
+      title: `${provider} Sign Up`,
+      description: `Redirecting to ${provider} authentication...`,
+    });
   };
 
   return (
@@ -74,9 +98,30 @@ const Header = () => {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                <Search className="h-4 w-4" />
-              </Button>
+              {/* Search */}
+              {isSearchOpen ? (
+                <form onSubmit={handleSearch} className="flex items-center space-x-2">
+                  <Input
+                    type="text"
+                    placeholder="Search livestock..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-48"
+                    autoFocus
+                  />
+                  <Button type="submit" variant="ghost" size="sm">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setIsSearchOpen(false)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </form>
+              ) : (
+                <Button variant="ghost" size="sm" onClick={() => setIsSearchOpen(true)} className="text-muted-foreground hover:text-foreground">
+                  <Search className="h-4 w-4" />
+                </Button>
+              )}
+              
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -94,7 +139,25 @@ const Header = () => {
               >
                 Admin
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setIsSignUpOpen(true)}>Sign In</Button>
+              
+              {/* Social Sign Up Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">Sign In</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-background border border-border shadow-lg">
+                  <DropdownMenuItem onClick={() => setIsSignUpOpen(true)}>
+                    Email Sign In
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSocialSignUp('Google')}>
+                    Continue with Google
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSocialSignUp('Facebook')}>
+                    Continue with Facebook
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <Button size="sm" className="bg-primary-500 hover:bg-primary-600" onClick={() => setIsSignUpOpen(true)}>
                 Get Started
               </Button>
@@ -102,7 +165,7 @@ const Header = () => {
 
             {/* Mobile Menu Button */}
             <div className="lg:hidden flex items-center space-x-2">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" onClick={() => setIsSearchOpen(true)} className="text-muted-foreground hover:text-foreground">
                 <Search className="h-4 w-4" />
               </Button>
               <Button 
@@ -127,6 +190,28 @@ const Header = () => {
               </button>
             </div>
           </div>
+
+          {/* Mobile Search */}
+          {isSearchOpen && (
+            <div className="lg:hidden py-4 border-t border-border">
+              <form onSubmit={handleSearch} className="flex items-center space-x-2">
+                <Input
+                  type="text"
+                  placeholder="Search livestock..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="flex-1"
+                  autoFocus
+                />
+                <Button type="submit" variant="ghost" size="sm">
+                  <Search className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setIsSearchOpen(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </form>
+            </div>
+          )}
 
           {/* Mobile Navigation */}
           {isMobileMenuOpen && (
@@ -177,7 +262,7 @@ const Header = () => {
                         {languageOptions.find(lang => lang.code === language)?.name || 'EN'}
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent className="bg-background border border-border">
                       {languageOptions.map((lang) => (
                         <DropdownMenuItem 
                           key={lang.code} 
@@ -191,15 +276,29 @@ const Header = () => {
                 </div>
                 
                 <div className="px-3 py-2 space-y-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => {setIsSignUpOpen(true); setIsMobileMenuOpen(false);}}
-                    className="w-full border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all"
-                  >
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    {t('nav.signup')}
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all"
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        {t('nav.signup')}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-background border border-border w-full">
+                      <DropdownMenuItem onClick={() => {setIsSignUpOpen(true); setIsMobileMenuOpen(false);}}>
+                        Email Sign Up
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSocialSignUp('Google')}>
+                        Continue with Google
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSocialSignUp('Facebook')}>
+                        Continue with Facebook
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Button size="sm" className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold">
                     📱 Download App
                   </Button>
