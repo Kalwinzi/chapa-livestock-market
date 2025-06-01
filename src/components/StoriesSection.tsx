@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { X, User } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface Story {
   id: number;
@@ -20,34 +20,42 @@ const StoriesSection = () => {
     {
       id: 1,
       name: "Mzee Masuruzu",
-      title: "Traditional Herder with 30+ Years Experience",
+      title: "Mfugaji wa Jadi mwenye Uzoefu wa Miaka 30+",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      shortDescription: "A wise traditional herder who has been caring for livestock for over three decades, passing down ancient wisdom to younger generations.",
-      fullStory: "Mzee Masuruzu has been a pillar of the livestock community for over 30 years. Starting as a young boy helping his father, he learned the traditional ways of animal husbandry that have been passed down through generations. His deep understanding of animal behavior, seasonal patterns, and natural remedies has made him a respected figure in the community. Through ChapaMarket, he now shares his knowledge with farmers across Africa, helping them improve their livestock care practices. His cattle are known for their exceptional health and productivity, a testament to his time-tested methods."
+      shortDescription: "Mzee mwenye hekima aliyekuwa akifuga mifugo kwa zaidi ya miongo mitatu, akiwapatia vijana maarifa ya kijadi.",
+      fullStory: "Mzee Masuruzu amekuwa nguzo ya jamii ya wafugaji kwa zaidi ya miaka 30. Alianza akiwa kijana akim-saidia baba yake, akajifunza njia za kijadi za ufugaji ambazo zimepitishwa kizazi hadi kizazi. Uelewa wake wa kina wa tabia za wanyamapori, mzunguko wa majira na dawa za asili umemfanya kuwa mtu anayeheshimiwa katika jamii. Kupitia ChapaMarket, sasa anashiriki maarifa yake na wafugaji kote Afrika, akiwasaidia kuboresha mbinu zao za kufuga mifugo. Ng'ombe wake wanajulikana kwa afya yao ya ajabu na uzalishaji, ushahidi wa mbinu zake za kale zilizojaribiwa."
     },
     {
       id: 2,
       name: "Mh. Hima",
-      title: "Local Leader Promoting Sustainable Farming",
+      title: "Kiongozi wa Kiuchumi wa Mazingira",
       image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      shortDescription: "A passionate community leader dedicated to promoting sustainable livestock farming practices that benefit both farmers and the environment.",
-      fullStory: "Mh. Hima has transformed her community's approach to livestock farming by introducing sustainable practices that increase productivity while protecting the environment. As a local leader, she organized training sessions on rotational grazing, water conservation, and organic feed production. Her initiatives have helped over 200 farmers in her region improve their livestock yields by 40% while reducing environmental impact. Through ChapaMarket, she connects with other sustainable farming advocates and continues to expand her network of environmentally conscious farmers across the continent."
+      shortDescription: "Kiongozi mwenye shauku wa kukuza mbinu za ufugaji endelevu ambazo zinanufaisha wafugaji na mazingira.",
+      fullStory: "Mh. Hima amebadilisha mtazamo wa jamii yake kuhusu ufugaji wa mifugo kwa kuanzisha mbinu endelevu ambazo zinaongeza uzalishaji huku zikilinda mazingira. Kama kiongozi wa kimtaa, aliandaa mafunzo kuhusu malisho ya kuzunguka, uhifadhi wa maji na uzalishaji wa chakula cha kibiolojia. Miradi yake imewasaidia wafugaji zaidi ya 200 katika mkoa wake kuboresha mazao yao ya mifugo kwa asilimia 40 huku wakipunguza athari kwa mazingira. Kupitia ChapaMarket, anaungana na wengine wanaotangaza ufugaji endelevu na anaendelea kupanua mtandao wake wa wafugaji wanaojali mazingira kote bara la Afrika."
     },
     {
       id: 3,
       name: "Bwana Mifugo",
-      title: "Animal Doctor & Livestock Care Expert",
+      title: "Daktari wa Wanyamapori na Mtaalamu wa Huduma za Mifugo",
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      shortDescription: "A dedicated veterinarian who provides essential healthcare services to livestock across rural communities, ensuring animal welfare and productivity.",
-      fullStory: "Dr. Mifugo has dedicated his career to improving livestock health in rural communities. With his mobile veterinary clinic, he travels to remote areas providing vaccinations, treatments, and health consultations. His expertise has saved thousands of animals and prevented disease outbreaks that could have devastated local farming communities. He uses ChapaMarket not only to connect with farmers needing his services but also to share preventive care tips and best practices. His work has been instrumental in improving livestock survival rates and overall herd health across multiple regions."
+      shortDescription: "Daktari aliyejitolea ambaye anatoa huduma muhimu za kijamii za afya kwa mifugo vijijini, akihakikisha ustawi wa wanyamapori na uzalishaji.",
+      fullStory: "Dk. Mifugo amejitolea kazi yake ya kuboresha afya ya mifugo katika jamii za vijijini. Akiwa na kliniki yake ya kuwapelekea daktari maarufu, anasafiri maeneo ya mbali kutoa chanjo, matibabu na ushauri wa afya. Utaalamu wake umeokoa maelfu ya wanyamapori na kuzuia mlipuko wa magonjwa ambayo yangeweza kuharibu jamii za wafugaji. Anatumia ChapaMarket si tu kuungana na wafugaji wanaohitaji huduma zake bali pia kushiriki vidokezo vya kuzuia magonjwa na mbinu bora. Kazi yake imekuwa muhimu katika kuboresha kiwango cha kuishi kwa mifugo na afya ya makundi yote katika maeneo mengi."
     },
     {
       id: 4,
       name: "John",
-      title: "Young Entrepreneur - From 2 Goats to 150+ Animals",
+      title: "Mjasiriamali Mchanga - Kutoka Mbuzi 2 hadi Wanyamapori 150+",
       image: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=150&h=150&fit=crop&crop=face",
-      shortDescription: "An inspiring young entrepreneur who started with just 2 goats and built a thriving livestock business with over 150 animals.",
-      fullStory: "John's journey began five years ago when he purchased his first two goats with savings from his part-time job. Through careful planning, reinvestment of profits, and strategic use of ChapaMarket to buy and sell livestock, he has built an impressive operation with over 150 animals including goats, sheep, and cattle. His success story demonstrates the power of determination and smart business practices. He now mentors other young entrepreneurs and uses ChapaMarket to expand his network and find new markets for his livestock. His business has not only provided financial independence but also created employment opportunities for others in his community."
+      shortDescription: "Mjasiriamali mchanga mwenye motisha ambaye alianza na mbuzi 2 tu na kujenga biashara ya mifugo yenye wanyamapori zaidi ya 150.",
+      fullStory: "Safari ya John ilianza miaka mitano iliyopita alipofuga mbuzi wake wa kwanza wawili akiwa na akiba kutoka kazi yake ya muda. Kupitia mipango makini, uwekezaji wa faida na matumizi makini ya ChapaMarket kununua na kuuza mifugo, amejenga shughuli kubwa yenye wanyamapori zaidi ya 150 ikiwa ni pamoja na mbuzi, kondoo na ng'ombe. Hadithi yake ya mafanikio inaonyesha nguvu ya uamuzi na mbinu busara za kibiashara. Sasa anaongoza vijana wengine wajasiriamali na anatumia ChapaMarket kupanua mtandao wake na kupata masoko mapya ya mifugo wake. Biashara yake sio tu imempa uhuru wa kifedha bali pia imeunda fursa za ajira kwa wengine katika jamii yake."
+    },
+    {
+      id: 5,
+      name: "Fatuma Hassan",
+      title: "Mfugaji wa Kuku na Mwanawake Mstahimilivu",
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face",
+      shortDescription: "Mama mwenye busara aliyebadilisha maisha ya familia yake kupitia ufugaji wa kuku wa kisasa na uzalishaji wa mayai.",
+      fullStory: "Fatuma Hassan alianza kazi yake ya ufugaji akiwa na kuku 10 tu katika uwanja mdogo nyuma ya nyumba yake huko Morogoro. Kupitia elimu ya kujifunza na kujitolea, alibadilisha shughuli yake ndogo kuwa kampuni ya kuku yenye nguvu na kuku 2000. Mbinu zake za kisasa za chakula na mazingira yamemfanya kuwa mmoja wa wazalishaji wakuu wa mayai katika mkoa. Anatumia ChapaMarket sio tu kuuza mazao yake bali pia kuongoza wanawake wengine kupitia mafunzo ya ufugaji. Mafanikio yake yamehimiza jamii zima na kuonyesha kuwa ufugaji unaweza kuwa njia ya kutoka umasikini."
     }
   ];
 
@@ -64,14 +72,14 @@ const StoriesSection = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Stories from Our Community
+            Hadithi kutoka Jamii Yetu
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Meet the inspiring people who are transforming livestock farming across Africa
+            Kutana na watu wenye motisha ambao wanabadilisha ufugaji wa mifugo kote Afrika Mashariki
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {stories.map((story) => (
             <Card key={story.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
               <CardContent className="p-6">
@@ -94,7 +102,7 @@ const StoriesSection = () => {
                   variant="outline" 
                   className="w-full hover:bg-primary-500 hover:text-white transition-colors"
                 >
-                  Read More
+                  Soma Zaidi
                 </Button>
               </CardContent>
             </Card>
@@ -102,7 +110,6 @@ const StoriesSection = () => {
         </div>
       </div>
 
-      {/* Story Modal */}
       {selectedStory && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-background rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">

@@ -1,141 +1,224 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { X, Send, MessageCircle, User } from 'lucide-react';
+import { MessageCircle, Send, X, User } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
-  id: number;
-  sender: 'buyer' | 'seller';
-  text: string;
-  timestamp: Date;
+  id: string;
+  content: string;
+  sender_id: string;
+  receiver_id: string;
+  created_at: string;
+  sender_name?: string;
 }
 
 interface ChatSystemProps {
   isOpen: boolean;
   onClose: () => void;
-  sellerName: string;
-  livestock?: any;
+  receiverId?: string;
+  receiverName?: string;
 }
 
-const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, sellerName, livestock }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      sender: 'seller',
-      text: `Hello! I'm ${sellerName}. Thank you for your interest in my livestock. How can I help you?`,
-      timestamp: new Date()
-    }
-  ]);
+const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, receiverId, receiverName }) => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (isOpen && user && receiverId) {
+      fetchMessages();
+      // Set up real-time subscription
+      const channel = supabase
+        .channel('messages')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `sender_id=eq.${user.id},receiver_id=eq.${receiverId}`
+          },
+          (payload) => {
+            const newMessage = payload.new as Message;
+            setMessages(prev => [...prev, newMessage]);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [isOpen, user, receiverId]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(scrollToBottom, [messages]);
+  const fetchMessages = async () => {
+    if (!user || !receiverId) return;
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select(`
+          *,
+          sender:profiles!sender_id(first_name, last_name)
+        `)
+        .or(`and(sender_id.eq.${user.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${user.id})`)
+        .order('created_at', { ascending: true });
 
-    const message: Message = {
-      id: messages.length + 1,
-      sender: 'buyer',
-      text: newMessage,
-      timestamp: new Date()
-    };
+      if (error) {
+        console.error('Error fetching messages:', error);
+        toast({
+          title: "Hitilafu",
+          description: "Imeshindikana kupata ujumbe",
+          variant: "destructive"
+        });
+      } else {
+        setMessages(data || []);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
-    setMessages([...messages, message]);
-    setNewMessage('');
+  const sendMessage = async () => {
+    if (!newMessage.trim() || !user || !receiverId) return;
 
-    // Simulate seller response
-    setTimeout(() => {
-      const responses = [
-        "Thanks for your message! I'll get back to you shortly.",
-        "Great question! Let me provide you with more details.",
-        "I'm available to discuss this further. What specific information do you need?",
-        "That sounds good! When would you like to arrange a visit?"
-      ];
-      
-      const sellerResponse: Message = {
-        id: messages.length + 2,
-        sender: 'seller',
-        text: responses[Math.floor(Math.random() * responses.length)],
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, sellerResponse]);
-    }, 1000);
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          content: newMessage,
+          sender_id: user.id,
+          receiver_id: receiverId
+        });
+
+      if (error) {
+        toast({
+          title: "Hitilafu",
+          description: "Imeshindikana kutuma ujumbe",
+          variant: "destructive"
+        });
+      } else {
+        setNewMessage('');
+        fetchMessages(); // Refresh messages
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Hitilafu",
+        description: "Kuna tatizo limetokea",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
   if (!isOpen) return null;
 
+  if (!user) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-6 text-center">
+            <MessageCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">Ingia kwanza</h3>
+            <p className="text-muted-foreground mb-4">
+              Unahitaji kuingia ili kuweza kuzungumza na wauuzaji
+            </p>
+            <Button onClick={onClose}>Sawa</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-lg h-[600px] flex flex-col">
+      <Card className="w-full max-w-md h-[600px] flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between border-b">
-          <div className="flex items-center space-x-2">
-            <MessageCircle className="h-5 w-5 text-primary-500" />
-            <div>
-              <CardTitle className="text-lg">Chat with {sellerName}</CardTitle>
-              {livestock && <p className="text-sm text-muted-foreground">{livestock.name}</p>}
-            </div>
-          </div>
+          <CardTitle className="flex items-center space-x-2">
+            <MessageCircle className="h-5 w-5" />
+            <span>Mazungumzo na {receiverName || 'Muuzaji'}</span>
+          </CardTitle>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
             <X className="h-5 w-5" />
           </button>
         </CardHeader>
-        
+
         <CardContent className="flex-1 flex flex-col p-0">
+          {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === 'buyer' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    message.sender === 'buyer'
-                      ? 'bg-primary-500 text-white'
-                      : 'bg-accent-100 dark:bg-accent-800 text-foreground'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2 mb-1">
-                    <User className="h-3 w-3" />
-                    <span className="text-xs font-medium">
-                      {message.sender === 'buyer' ? 'You' : sellerName}
-                    </span>
-                  </div>
-                  <p className="text-sm">{message.text}</p>
-                  <p className="text-xs opacity-70 mt-1">
-                    {message.timestamp.toLocaleTimeString()}
-                  </p>
-                </div>
+            {messages.length === 0 ? (
+              <div className="text-center text-muted-foreground">
+                <MessageCircle className="h-8 w-8 mx-auto mb-2" />
+                <p>Hakuna ujumbe bado. Anza mazungumzo!</p>
               </div>
-            ))}
+            ) : (
+              messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.sender_id === user.id ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-lg p-3 ${
+                      message.sender_id === user.id
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-foreground'
+                    }`}
+                  >
+                    <p className="text-sm">{message.content}</p>
+                    <div className="text-xs mt-1 opacity-70">
+                      {new Date(message.created_at).toLocaleTimeString('sw-KE', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
             <div ref={messagesEndRef} />
           </div>
-          
+
+          {/* Message Input */}
           <div className="border-t p-4">
             <div className="flex space-x-2">
               <Input
-                placeholder="Type your message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
+                placeholder="Andika ujumbe..."
                 className="flex-1"
+                disabled={loading}
               />
-              <Button 
-                onClick={handleSendMessage}
-                className="bg-primary-500 hover:bg-primary-600 text-white"
+              <Button
+                onClick={sendMessage}
+                disabled={loading || !newMessage.trim()}
+                size="sm"
               >
                 <Send className="h-4 w-4" />
               </Button>
