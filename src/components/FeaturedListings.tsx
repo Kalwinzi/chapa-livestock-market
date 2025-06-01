@@ -1,10 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MapPin, ShoppingCart, Eye, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { getFeaturedLivestock, allLivestockData } from '@/data/livestockData';
 import BuyerContactForm from './BuyerContactForm';
 
 const FeaturedListings = () => {
@@ -12,43 +12,14 @@ const FeaturedListings = () => {
   const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation<HTMLDivElement>();
   const [selectedLivestock, setSelectedLivestock] = useState<any>(null);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
-  const [featuredListings, setFeaturedListings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchFeaturedListings();
-  }, []);
-
-  const fetchFeaturedListings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('livestock')
-        .select('*')
-        .eq('featured', true)
-        .limit(6);
-
-      if (error) {
-        console.error('Error fetching livestock:', error);
-        toast({
-          title: "Hitilafu",
-          description: "Imeshindikana kupata orodha za mifugo",
-          variant: "destructive"
-        });
-      } else {
-        setFeaturedListings(data || []);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const featuredListings = getFeaturedLivestock();
 
   const handleLocationClick = (location: string) => {
     toast({
-      title: "Mahali Palichaguliwa",
-      description: `Kunaonyesha mifugo karibu na ${location}. Hali ya ramani inakuja hivi karibuni!`,
+      title: "Location Selected",
+      description: `Showing livestock near ${location}. Map feature coming soon!`,
     });
   };
 
@@ -59,49 +30,24 @@ const FeaturedListings = () => {
 
   const handleViewDetails = (item: any) => {
     toast({
-      title: "Maelezo ya Mfugo",
-      description: `${item.name} - Aina: ${item.breed}, Umri: ${item.age}, Jinsia: ${item.gender}, Bei: ${item.price}`,
+      title: "Livestock Details",
+      description: `${item.name} - Breed: ${item.details.breed}, Age: ${item.details.age}, Gender: ${item.details.gender}, Type: ${item.details.type}, Weight: ${item.details.weight || 'N/A'}. Seller: ${item.seller.name} (${item.seller.phone}) - ${item.seller.description}`,
     });
   };
 
   const handleFavorite = (item: any) => {
     toast({
-      title: "Imeongezwa kwenye Vipendwa",
-      description: `${item.name} imehifadhiwa kwenye vipendwa vyako`,
+      title: "Added to Favorites",
+      description: `${item.name} saved to your favorites`,
     });
   };
 
-  const handleViewMore = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('livestock')
-        .select('*');
-
-      if (!error && data) {
-        toast({
-          title: "Angalia Orodha Zaidi",
-          description: `Kunaonyesha orodha zote ${data.length} zinazopatikana za mifugo`,
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching all livestock:', error);
-    }
+  const handleViewMore = () => {
+    toast({
+      title: "View More Listings",
+      description: `Showing all ${allLivestockData.length} available livestock listings`,
+    });
   };
-
-  if (loading) {
-    return (
-      <section className="py-16 bg-accent-50 dark:bg-gray-900/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-300 rounded w-64 mx-auto mb-4"></div>
-              <div className="h-4 bg-gray-300 rounded w-96 mx-auto"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <>
@@ -116,14 +62,14 @@ const FeaturedListings = () => {
                   : 'opacity-0 translate-y-8'
               }`}
             >
-              Mifugo Maalum kutoka Tanzania
+              Featured Livestock from Tanzania
             </h2>
             <p className={`text-muted-foreground max-w-2xl mx-auto transition-all duration-700 delay-200 ${
               titleVisible 
                 ? 'opacity-100 translate-y-0' 
                 : 'opacity-0 translate-y-8'
             }`}>
-              Gundua mifugo ya ubora wa juu kutoka kwa wauuzaji waliohakikiwa kote Tanzania
+              Discover high-quality livestock from verified sellers across Tanzania
             </p>
           </div>
           
@@ -139,7 +85,7 @@ const FeaturedListings = () => {
               <div key={listing.id} className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-border">
                 <div className="relative">
                   <img
-                    src={listing.image_url}
+                    src={listing.image}
                     alt={listing.name}
                     className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                     loading="lazy"
@@ -147,7 +93,7 @@ const FeaturedListings = () => {
                   <div className="absolute top-4 right-4 flex space-x-2">
                     {listing.verified && (
                       <div className="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-                        ✓ Imethibitishwa
+                        ✓ Verified
                       </div>
                     )}
                     <button 
@@ -163,7 +109,7 @@ const FeaturedListings = () => {
                       className="bg-black/70 text-white px-3 py-1 rounded-full text-sm hover:bg-black/90 transition-colors flex items-center space-x-1"
                     >
                       <Eye className="h-3 w-3" />
-                      <span>Angalia Maelezo</span>
+                      <span>View Details</span>
                     </button>
                   </div>
                 </div>
@@ -181,20 +127,31 @@ const FeaturedListings = () => {
                   
                   <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Aina: </span>
-                      <span className="font-medium text-foreground">{listing.breed}</span>
+                      <span className="text-muted-foreground">Breed: </span>
+                      <span className="font-medium text-foreground">{listing.details.breed}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Umri: </span>
-                      <span className="font-medium text-foreground">{listing.age}</span>
+                      <span className="text-muted-foreground">Age: </span>
+                      <span className="font-medium text-foreground">{listing.details.age}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Jinsia: </span>
-                      <span className="font-medium text-foreground">{listing.gender}</span>
+                      <span className="text-muted-foreground">Gender: </span>
+                      <span className="font-medium text-foreground">{listing.details.gender}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Kigori: </span>
-                      <span className="font-medium text-foreground">{listing.category}</span>
+                      <span className="text-muted-foreground">Type: </span>
+                      <span className="font-medium text-foreground">{listing.details.type}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <span className="text-muted-foreground text-sm">Seller: </span>
+                      <span className="font-medium text-foreground text-sm">{listing.seller.name}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-yellow-500">★</span>
+                      <span className="text-sm font-medium ml-1 text-foreground">{listing.seller.rating}</span>
                     </div>
                   </div>
                   
@@ -205,7 +162,7 @@ const FeaturedListings = () => {
                       className="bg-primary-500 hover:bg-primary-600 text-white transition-all duration-300 hover:scale-105"
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      Wasiliana na Muuzaji
+                      Contact Seller
                     </Button>
                   </div>
                 </div>
@@ -220,7 +177,7 @@ const FeaturedListings = () => {
               className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all duration-300 hover:scale-105"
               onClick={handleViewMore}
             >
-              Angalia Orodha Zaidi ({featuredListings.length}+ Zinapatikana)
+              View More Listings ({allLivestockData.length}+ Available)
             </Button>
           </div>
         </div>
