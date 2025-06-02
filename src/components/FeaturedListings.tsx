@@ -4,6 +4,7 @@ import { MapPin, ShoppingCart, Eye, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useToast } from '@/hooks/use-toast';
+import { useFavorites } from '@/hooks/useFavorites';
 import { getFeaturedLivestock, allLivestockData } from '@/data/livestockData';
 import BuyerContactForm from './BuyerContactForm';
 
@@ -13,6 +14,7 @@ const FeaturedListings = () => {
   const [selectedLivestock, setSelectedLivestock] = useState<any>(null);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const { toast } = useToast();
+  const { favorites, toggleFavorite } = useFavorites();
 
   const featuredListings = getFeaturedLivestock();
 
@@ -36,10 +38,7 @@ const FeaturedListings = () => {
   };
 
   const handleFavorite = (item: any) => {
-    toast({
-      title: "Added to Favorites",
-      description: `${item.name} saved to your favorites`,
-    });
+    toggleFavorite(item.id.toString());
   };
 
   const handleViewMore = () => {
@@ -100,7 +99,7 @@ const FeaturedListings = () => {
                       onClick={() => handleFavorite(listing)}
                       className="bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-colors"
                     >
-                      <Heart className="h-4 w-4 text-red-500" />
+                      <Heart className={`h-4 w-4 ${favorites.includes(listing.id.toString()) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
                     </button>
                   </div>
                   <div className="absolute bottom-4 left-4">

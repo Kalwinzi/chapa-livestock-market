@@ -9,6 +9,73 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analytics: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          livestock_id: string | null
+          metadata: Json | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          livestock_id?: string | null
+          metadata?: Json | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          livestock_id?: string | null
+          metadata?: Json | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_livestock_id_fkey"
+            columns: ["livestock_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          livestock_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          livestock_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          livestock_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_livestock_id_fkey"
+            columns: ["livestock_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       livestock: {
         Row: {
           age: string | null
@@ -158,6 +225,56 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          livestock_id: string
+          order_status: string
+          payment_details: Json | null
+          payment_method: string
+          payment_status: string
+          seller_id: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          livestock_id: string
+          order_status?: string
+          payment_details?: Json | null
+          payment_method?: string
+          payment_status?: string
+          seller_id: string
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          livestock_id?: string
+          order_status?: string
+          payment_details?: Json | null
+          payment_method?: string
+          payment_status?: string
+          seller_id?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_livestock_id_fkey"
+            columns: ["livestock_id"]
+            isOneToOne: false
+            referencedRelation: "livestock"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -196,6 +313,92 @@ export type Database = {
           user_type?: string | null
         }
         Relationships: []
+      }
+      stories: {
+        Row: {
+          author_id: string | null
+          author_image: string | null
+          author_name: string
+          content: string
+          created_at: string
+          featured: boolean | null
+          id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_image?: string | null
+          author_name: string
+          content: string
+          created_at?: string
+          featured?: boolean | null
+          id?: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          author_image?: string | null
+          author_name?: string
+          content?: string
+          created_at?: string
+          featured?: boolean | null
+          id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json | null
+          order_id: string
+          payment_method: string
+          status: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          order_id: string
+          payment_method: string
+          status?: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          order_id?: string
+          payment_method?: string
+          status?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
