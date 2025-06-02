@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { AnimatedLivestockLoader } from './AnimatedLivestockLoader'
+import AnimatedLivestockLoader from './AnimatedLivestockLoader'
 import AuthModal from './AuthModal'
 
 interface AuthWrapperProps {
