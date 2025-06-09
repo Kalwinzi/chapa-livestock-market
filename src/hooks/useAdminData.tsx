@@ -30,7 +30,16 @@ export const useAdminData = () => {
     try {
       setLoading(true);
 
-      // Fetch comprehensive stats
+      // Fetch comprehensive stats with timeout protection
+      const fetchWithTimeout = (promise: Promise<any>, timeout = 5000) => {
+        return Promise.race([
+          promise,
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Request timeout')), timeout)
+          )
+        ]);
+      };
+
       const [
         { count: usersCount },
         { count: livestockCount },
@@ -40,18 +49,20 @@ export const useAdminData = () => {
         { count: messagesCount },
         { count: activeUsersCount },
         { count: completedOrdersCount }
-      ] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('livestock').select('*', { count: 'exact', head: true }),
-        supabase.from('orders').select('*', { count: 'exact', head: true }),
-        supabase.from('orders').select('total_amount'),
-        supabase.from('livestock').select('*', { count: 'exact', head: true }).eq('verified', false),
-        supabase.from('messages').select('*', { count: 'exact', head: true }),
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('user_type', 'seller'),
-        supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'completed')
-      ]);
+      ] = await Promise.allSettled([
+        fetchWithTimeout(supabase.from('profiles').select('*', { count: 'exact', head: true })),
+        fetchWithTimeout(supabase.from('livestock').select('*', { count: 'exact', head: true })),
+        fetchWithTimeout(supabase.from('orders').select('*', { count: 'exact', head: true })),
+        fetchWithTimeout(supabase.from('orders').select('total_amount')),
+        fetchWithTimeout(supabase.from('livestock').select('*', { count: 'exact', head: true }).eq('verified', false)),
+        fetchWithTimeout(supabase.from('messages').select('*', { count: 'exact', head: true })),
+        fetchWithTimeout(supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('user_type', 'seller')),
+        fetchWithTimeout(supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'completed'))
+      ]).then(results => results.map(result => 
+        result.status === 'fulfilled' ? result.value : { count: 0, data: [] }
+      )) as any[];
 
-      const totalRevenue = ordersData?.reduce((sum, order) => sum + parseFloat(order.total_amount || '0'), 0) || 0;
+      const totalRevenue = ordersData?.reduce((sum: number, order: any) => sum + parseFloat(order.total_amount || '0'), 0) || 0;
 
       setStats({
         totalUsers: usersCount || 0,
@@ -64,8 +75,8 @@ export const useAdminData = () => {
         completedOrders: completedOrdersCount || 0
       });
 
-      // Fetch detailed data
-      await Promise.all([
+      // Fetch detailed data in parallel but don't block main stats
+      Promise.all([
         fetchUsers(),
         fetchLivestock(),
         fetchOrders(),
@@ -73,13 +84,15 @@ export const useAdminData = () => {
         fetchStories(),
         fetchTransactions(),
         fetchAnalytics()
-      ]);
+      ]).catch(error => {
+        console.error('Error fetching detailed data:', error);
+      });
 
     } catch (error: any) {
       console.error('Error fetching dashboard data:', error);
       toast({
         title: "Error",
-        description: "Failed to load dashboard data",
+        description: "Failed to load dashboard data. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -88,84 +101,118 @@ export const useAdminData = () => {
   };
 
   const fetchUsers = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (!error) setUsers(data || []);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      if (!error) setUsers(data || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
 
   const fetchLivestock = async () => {
-    const { data, error } = await supabase
-      .from('livestock')
-      .select(`
-        *,
-        profiles!livestock_user_id_fkey(first_name, last_name, email)
-      `)
-      .order('created_at', { ascending: false });
-    
-    if (!error) setLivestock(data || []);
+    try {
+      const { data, error } = await supabase
+        .from('livestock')
+        .select(`
+          *,
+          profiles!livestock_user_id_fkey(first_name, last_name, email)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      if (!error) setLivestock(data || []);
+    } catch (error) {
+      console.error('Error fetching livestock:', error);
+    }
   };
 
   const fetchOrders = async () => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        buyer:buyer_id(first_name, last_name, email),
-        seller:seller_id(first_name, last_name, email),
-        livestock:livestock_id(name, category, price)
-      `)
-      .order('created_at', { ascending: false });
-    
-    if (!error) setOrders(data || []);
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          buyer:buyer_id(first_name, last_name, email),
+          seller:seller_id(first_name, last_name, email),
+          livestock:livestock_id(name, category, price)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      if (!error) setOrders(data || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
   };
 
   const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from('messages')
-      .select(`
-        *,
-        sender:sender_id(first_name, last_name, email),
-        receiver:receiver_id(first_name, last_name, email),
-        livestock:livestock_id(name)
-      `)
-      .order('created_at', { ascending: false });
-    
-    if (!error) setMessages(data || []);
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select(`
+          *,
+          sender:sender_id(first_name, last_name, email),
+          receiver:receiver_id(first_name, last_name, email),
+          livestock:livestock_id(name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      if (!error) setMessages(data || []);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
   };
 
   const fetchStories = async () => {
-    const { data, error } = await supabase
-      .from('stories')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (!error) setStories(data || []);
+    try {
+      const { data, error } = await supabase
+        .from('stories')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      
+      if (!error) setStories(data || []);
+    } catch (error) {
+      console.error('Error fetching stories:', error);
+    }
   };
 
   const fetchTransactions = async () => {
-    const { data, error } = await supabase
-      .from('transactions')
-      .select(`
-        *,
-        profiles!transactions_user_id_fkey(first_name, last_name, email),
-        orders!transactions_order_id_fkey(total_amount)
-      `)
-      .order('created_at', { ascending: false });
-    
-    if (!error) setTransactions(data || []);
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          profiles!transactions_user_id_fkey(first_name, last_name, email),
+          orders!transactions_order_id_fkey(total_amount)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      if (!error) setTransactions(data || []);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
   };
 
   const fetchAnalytics = async () => {
-    const { data, error } = await supabase
-      .from('analytics')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    
-    if (!error) setAnalytics(data || []);
+    try {
+      const { data, error } = await supabase
+        .from('analytics')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      
+      if (!error) setAnalytics(data || []);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+    }
   };
 
   return {

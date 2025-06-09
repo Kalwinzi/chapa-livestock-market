@@ -12,19 +12,21 @@ interface UseOptimizedQueryProps<T> {
   refetchOnWindowFocus?: boolean;
 }
 
-export const useOptimizedQuery = <T,>({
-  queryKey,
-  queryFn,
-  staleTime = 5 * 60 * 1000, // 5 minutes
-  cacheTime = 10 * 60 * 1000, // 10 minutes
-  enabled = true,
-  refetchOnWindowFocus = false
-}: UseOptimizedQueryProps<T>) => {
+export const useOptimizedQuery = <T,>(props: UseOptimizedQueryProps<T>) => {
+  const {
+    queryKey,
+    queryFn,
+    staleTime = 5 * 60 * 1000, // 5 minutes
+    cacheTime = 10 * 60 * 1000, // 10 minutes
+    enabled = true,
+    refetchOnWindowFocus = false
+  } = props;
+
   const { getCachedData, setCachedData } = usePerformanceCache();
 
   const optimizedQueryFn = useCallback(async (): Promise<T> => {
     const cacheKey = queryKey.join('-');
-    const cached = getCachedData<T>(cacheKey);
+    const cached = getCachedData(cacheKey) as T;
     
     if (cached) {
       return cached;

@@ -23,8 +23,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      
       console.log('Auth event:', event, session)
       setSession(session)
       setUser(session?.user ?? null)
@@ -52,17 +56,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAdmin(false)
       }
       
-      setLoading(false)
+      // Reduce loading time
+      if (mounted) {
+        setLoading(false)
+      }
     })
 
-    // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
+    // Check for existing session with faster timeout
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (!mounted) return;
+        
+        if (error) {
+          console.error('Session error:', error)
+        }
+        
+        setSession(session)
+        setUser(session?.user ?? null)
+      } catch (error) {
+        console.error('Auth initialization error:', error)
+      } finally {
+        if (mounted) {
+          // Ensure loading stops even if there's an error
+          setTimeout(() => {
+            if (mounted) setLoading(false)
+          }, 1000) // Maximum 1 second loading
+        }
+      }
+    }
 
-    return () => subscription.unsubscribe()
+    initializeAuth()
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signIn = async (email: string, password: string) => {

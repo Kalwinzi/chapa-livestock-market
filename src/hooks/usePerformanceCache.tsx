@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 interface CacheItem<T> {
   data: T;
@@ -61,11 +61,11 @@ export const usePerformanceCache = () => {
     setCacheVersion(prev => prev + 1);
   }, []);
 
-  const getCachedData = useCallback(<T>(key: string): T | null => {
-    return globalCache.get<T>(key);
+  const getCachedData = useCallback((key: string) => {
+    return globalCache.get(key);
   }, [cacheVersion]);
 
-  const setCachedData = useCallback(<T>(key: string, data: T, ttl?: number): void => {
+  const setCachedData = useCallback((key: string, data: any, ttl?: number): void => {
     globalCache.set(key, data, ttl);
     invalidateCache();
   }, [invalidateCache]);
