@@ -30,8 +30,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null)
       
       if (session?.user) {
-        // Check if user is admin
-        setTimeout(async () => {
+        // Check if user is admin - direct check for the specific admin email
+        if (session.user.email === 'kalwinzic@gmail.com') {
+          // Verify the user exists in profiles table with admin role
           try {
             const { data: profile } = await supabase
               .from('profiles')
@@ -39,11 +40,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               .eq('id', session.user.id)
               .single()
             
-            setIsAdmin(profile?.user_type === 'admin')
+            setIsAdmin(profile?.user_type === 'admin' && session.user.email === 'kalwinzic@gmail.com')
           } catch (error) {
             console.error('Error checking admin status:', error)
+            setIsAdmin(false)
           }
-        }, 0)
+        } else {
+          setIsAdmin(false)
+        }
       } else {
         setIsAdmin(false)
       }
@@ -62,7 +66,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [])
 
   const signIn = async (email: string, password: string) => {
-    return await supabase.auth.signInWithPassword({ email, password })
+    const result = await supabase.auth.signInWithPassword({ email, password })
+    
+    // If this is the admin email, ensure they're marked as admin in the database
+    if (!result.error && email === 'kalwinzic@gmail.com') {
+      try {
+        await supabase
+          .from('profiles')
+          .upsert({
+            id: result.data.user?.id,
+            email: email,
+            user_type: 'admin'
+          }, {
+            onConflict: 'id'
+          })
+      } catch (error) {
+        console.error('Error updating admin profile:', error)
+      }
+    }
+    
+    return result
   }
 
   const signUp = async (email: string, password: string, userData: any) => {
@@ -79,6 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const signOut = async () => {
+    setIsAdmin(false) // Clear admin status immediately
     return await supabase.auth.signOut()
   }
 

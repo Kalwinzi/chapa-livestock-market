@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Search, User, Settings, LogOut, Shield } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -13,6 +13,18 @@ const Header = () => {
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   const { t, theme, toggleTheme } = useTheme();
   const { user, signOut, isAdmin } = useAuth();
+
+  // Auto-open admin panel for admin user after login
+  useEffect(() => {
+    if (user?.email === 'kalwinzic@gmail.com' && isAdmin) {
+      // Small delay to ensure auth state is fully settled
+      const timer = setTimeout(() => {
+        setIsAdminPanelOpen(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [user, isAdmin]);
 
   const navigationItems = [
     { href: '#home', label: t('nav.home') },
@@ -35,6 +47,7 @@ const Header = () => {
     try {
       await signOut();
       setIsMenuOpen(false);
+      setIsAdminPanelOpen(false); // Close admin panel on logout
     } catch (error) {
       console.error('Sign out error:', error);
     }
@@ -88,21 +101,24 @@ const Header = () => {
 
               {user ? (
                 <div className="flex items-center space-x-2">
-                  {isAdmin && (
+                  {isAdmin && user.email === 'kalwinzic@gmail.com' && (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setIsAdminPanelOpen(true)}
-                      className="text-red-600 border-red-600 hover:bg-red-50"
+                      className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
                     >
                       <Shield className="h-4 w-4 mr-2" />
-                      Admin
+                      Admin Dashboard
                     </Button>
                   )}
                   <div className="flex items-center space-x-2 px-3 py-1 bg-accent rounded-lg">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium">
-                      {user.user_metadata?.first_name || user.email?.split('@')[0]}
+                      {isAdmin && user.email === 'kalwinzic@gmail.com' 
+                        ? 'Admin' 
+                        : user.user_metadata?.first_name || user.email?.split('@')[0]
+                      }
                     </span>
                   </div>
                   <Button
@@ -164,7 +180,7 @@ const Header = () => {
                   
                   {user ? (
                     <div className="space-y-3">
-                      {isAdmin && (
+                      {isAdmin && user.email === 'kalwinzic@gmail.com' && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -172,16 +188,19 @@ const Header = () => {
                             setIsAdminPanelOpen(true);
                             setIsMenuOpen(false);
                           }}
-                          className="w-full text-red-600 border-red-600 hover:bg-red-50"
+                          className="w-full text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
                         >
                           <Shield className="h-4 w-4 mr-2" />
-                          Admin Panel
+                          Admin Dashboard
                         </Button>
                       )}
                       <div className="flex items-center space-x-2 px-3 py-2 bg-accent rounded-lg">
                         <User className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-medium">
-                          {user.user_metadata?.first_name || user.email?.split('@')[0]}
+                          {isAdmin && user.email === 'kalwinzic@gmail.com' 
+                            ? 'Administrator' 
+                            : user.user_metadata?.first_name || user.email?.split('@')[0]
+                          }
                         </span>
                       </div>
                       <Button

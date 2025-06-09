@@ -1,8 +1,19 @@
 
 import React from 'react';
+import { cn } from '@/lib/utils';
 import { 
-  BarChart3, Users, ShoppingCart, DollarSign, MessageSquare, FileText,
-  TrendingUp, Megaphone, Settings, CreditCard
+  LayoutDashboard, 
+  Users, 
+  Beef, 
+  ShoppingCart, 
+  MessageSquare, 
+  BookOpen, 
+  BarChart3, 
+  Bell, 
+  Settings,
+  MessageCircle,
+  AlertTriangle,
+  Image
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -11,34 +22,43 @@ interface AdminSidebarProps {
 }
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActiveTab }) => {
-  const TabButton = ({ id, label, icon: Icon }: { id: string; label: string; icon: any }) => (
-    <button
-      onClick={() => setActiveTab(id)}
-      className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors w-full ${
-        activeTab === id 
-          ? 'bg-primary text-primary-foreground' 
-          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-      }`}
-    >
-      <Icon className="h-4 w-4" />
-      <span className="hidden sm:inline">{label}</span>
-    </button>
-  );
+  const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'users', label: 'Users', icon: Users },
+    { id: 'livestock', label: 'Livestock', icon: Beef },
+    { id: 'orders', label: 'Orders', icon: ShoppingCart },
+    { id: 'messages', label: 'Messages', icon: MessageSquare },
+    { id: 'chat', label: 'Live Chat', icon: MessageCircle },
+    { id: 'stories', label: 'Stories', icon: BookOpen },
+    { id: 'banners', label: 'Banners', icon: Image },
+    { id: 'reports', label: 'Reports', icon: AlertTriangle },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'settings', label: 'Settings', icon: Settings }
+  ];
 
   return (
-    <div className="w-16 sm:w-64 bg-accent/50 border-r border-border p-3 sm:p-4 overflow-y-auto">
-      <div className="space-y-2">
-        <TabButton id="dashboard" label="Dashboard" icon={BarChart3} />
-        <TabButton id="users" label="Users" icon={Users} />
-        <TabButton id="livestock" label="Livestock" icon={ShoppingCart} />
-        <TabButton id="orders" label="Orders" icon={DollarSign} />
-        <TabButton id="messages" label="Messages" icon={MessageSquare} />
-        <TabButton id="stories" label="Stories" icon={FileText} />
-        <TabButton id="transactions" label="Transactions" icon={CreditCard} />
-        <TabButton id="analytics" label="Analytics" icon={TrendingUp} />
-        <TabButton id="notifications" label="Notifications" icon={Megaphone} />
-        <TabButton id="settings" label="Settings" icon={Settings} />
-      </div>
+    <div className="w-64 bg-muted/30 border-r border-border p-4 overflow-y-auto">
+      <nav className="space-y-2">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={cn(
+                "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors",
+                activeTab === item.id
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              <span className="text-sm font-medium">{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 };
