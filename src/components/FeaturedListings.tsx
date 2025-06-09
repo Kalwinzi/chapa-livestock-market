@@ -5,16 +5,23 @@ import { Button } from '@/components/ui/button';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useToast } from '@/hooks/use-toast';
 import { useFavorites } from '@/hooks/useFavorites';
+import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
 import { getFeaturedLivestock, allLivestockData } from '@/data/livestockData';
 import BuyerContactForm from './BuyerContactForm';
+import LazyImage from './optimized/LazyImage';
+import OptimizedListingGrid from './optimized/OptimizedListingGrid';
+import PageLoader from './optimized/PageLoader';
 
 const FeaturedListings = () => {
   const { elementRef: titleRef, isVisible: titleVisible } = useScrollAnimation<HTMLHeadingElement>();
   const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation<HTMLDivElement>();
   const [selectedLivestock, setSelectedLivestock] = useState<any>(null);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { favorites, toggleFavorite } = useFavorites();
+  
+  usePerformanceMonitor('FeaturedListings');
 
   const featuredListings = getFeaturedLivestock();
 
@@ -37,11 +44,10 @@ const FeaturedListings = () => {
     });
   };
 
-  const handleFavorite = (item: any) => {
-    toggleFavorite(item.id.toString());
-  };
-
-  const handleViewMore = () => {
+  const handleViewMore = async () => {
+    setIsLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 800)); // Simulate loading
+    setIsLoading(false);
     toast({
       title: "View More Listings",
       description: `Showing all ${allLivestockData.length} available livestock listings`,
@@ -72,101 +78,15 @@ const FeaturedListings = () => {
             </p>
           </div>
           
-          <div 
-            ref={gridRef}
-            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-700 delay-300 ${
-              gridVisible 
-                ? 'opacity-100 translate-y-0' 
-                : 'opacity-0 translate-y-8'
-            }`}
-          >
-            {featuredListings.map((listing) => (
-              <div key={listing.id} className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-border">
-                <div className="relative">
-                  <img
-                    src={listing.image}
-                    alt={listing.name}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-4 right-4 flex space-x-2">
-                    {listing.verified && (
-                      <div className="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-                        ✓ Verified
-                      </div>
-                    )}
-                    <button 
-                      onClick={() => handleFavorite(listing)}
-                      className="bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-colors"
-                    >
-                      <Heart className={`h-4 w-4 ${favorites.includes(listing.id.toString()) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
-                    </button>
-                  </div>
-                  <div className="absolute bottom-4 left-4">
-                    <button 
-                      onClick={() => handleViewDetails(listing)}
-                      className="bg-black/70 text-white px-3 py-1 rounded-full text-sm hover:bg-black/90 transition-colors flex items-center space-x-1"
-                    >
-                      <Eye className="h-3 w-3" />
-                      <span>View Details</span>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-foreground mb-2">{listing.name}</h3>
-                  
-                  <button 
-                    onClick={() => handleLocationClick(listing.location)}
-                    className="flex items-center text-muted-foreground mb-2 hover:text-primary-500 transition-colors"
-                  >
-                    <MapPin className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{listing.location}</span>
-                  </button>
-                  
-                  <div className="grid grid-cols-2 gap-2 mb-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Breed: </span>
-                      <span className="font-medium text-foreground">{listing.details.breed}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Age: </span>
-                      <span className="font-medium text-foreground">{listing.details.age}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Gender: </span>
-                      <span className="font-medium text-foreground">{listing.details.gender}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Type: </span>
-                      <span className="font-medium text-foreground">{listing.details.type}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center mb-4">
-                    <div>
-                      <span className="text-muted-foreground text-sm">Seller: </span>
-                      <span className="font-medium text-foreground text-sm">{listing.seller.name}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-yellow-500">★</span>
-                      <span className="text-sm font-medium ml-1 text-foreground">{listing.seller.rating}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="text-2xl font-bold text-primary-500">{listing.price}</div>
-                    <Button 
-                      onClick={() => handleContactSeller(listing)}
-                      className="bg-primary-500 hover:bg-primary-600 text-white transition-all duration-300 hover:scale-105"
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Contact Seller
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div ref={gridRef}>
+            <PageLoader isLoading={isLoading} loadingText="Loading livestock...">
+              <OptimizedListingGrid
+                listings={featuredListings}
+                onContactSeller={handleContactSeller}
+                onViewDetails={handleViewDetails}
+                itemsPerPage={6}
+              />
+            </PageLoader>
           </div>
           
           <div className="text-center mt-12">
@@ -175,8 +95,16 @@ const FeaturedListings = () => {
               variant="outline" 
               className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all duration-300 hover:scale-105"
               onClick={handleViewMore}
+              disabled={isLoading}
             >
-              View More Listings ({allLivestockData.length}+ Available)
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                  Loading...
+                </>
+              ) : (
+                `View More Listings (${allLivestockData.length}+ Available)`
+              )}
             </Button>
           </div>
         </div>

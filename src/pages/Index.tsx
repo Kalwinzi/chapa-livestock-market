@@ -1,39 +1,81 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
+import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
-import AboutSection from '../components/AboutSection';
-import SearchSection from '../components/SearchSection';
-import CategoriesSection from '../components/CategoriesSection';
-import FeaturesSection from '../components/FeaturesSection';
-import FeaturedListings from '../components/FeaturedListings';
-import HowItWorksSimple from '../components/HowItWorksSimple';
-import StoriesSection from '../components/StoriesSection';
-import TestimonialsSection from '../components/TestimonialsSection';
-import CallToActionSection from '../components/CallToActionSection';
-import PrivacyTermsSection from '../components/PrivacyTermsSection';
-import ContactUs from '../components/ContactUs';
-import Footer from '../components/Footer';
+import SkeletonLoader from '../components/SkeletonLoader';
+
+// Lazy load components for better performance
+const AboutSection = lazy(() => import('../components/AboutSection'));
+const SearchSection = lazy(() => import('../components/SearchSection'));
+const CategoriesSection = lazy(() => import('../components/CategoriesSection'));
+const FeaturesSection = lazy(() => import('../components/FeaturesSection'));
+const FeaturedListings = lazy(() => import('../components/FeaturedListings'));
+const HowItWorksSimple = lazy(() => import('../components/HowItWorksSimple'));
+const StoriesSection = lazy(() => import('../components/StoriesSection'));
+const TestimonialsSection = lazy(() => import('../components/TestimonialsSection'));
+const CallToActionSection = lazy(() => import('../components/CallToActionSection'));
+const PrivacyTermsSection = lazy(() => import('../components/PrivacyTermsSection'));
+const ContactUs = lazy(() => import('../components/ContactUs'));
+const Footer = lazy(() => import('../components/Footer'));
 
 const Index = () => {
+  usePerformanceMonitor('HomePage');
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       <main className="relative">
         <HeroSection />
-        <AboutSection />
-        <SearchSection />
-        <CategoriesSection />
-        <FeaturesSection />
-        <FeaturedListings />
-        <HowItWorksSimple />
-        <StoriesSection />
-        <TestimonialsSection />
-        <CallToActionSection />
-        <PrivacyTermsSection />
-        <ContactUs />
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <AboutSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <SearchSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <CategoriesSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <FeaturesSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Listing />}>
+          <FeaturedListings />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <HowItWorksSimple />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <StoriesSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <TestimonialsSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <CallToActionSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <PrivacyTermsSection />
+        </Suspense>
+        
+        <Suspense fallback={<SkeletonLoader.Category />}>
+          <ContactUs />
+        </Suspense>
       </main>
-      <Footer />
+      
+      <Suspense fallback={<div className="h-32 bg-muted animate-pulse" />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };
