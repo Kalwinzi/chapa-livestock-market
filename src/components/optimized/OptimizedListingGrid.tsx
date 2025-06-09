@@ -28,7 +28,7 @@ const OptimizedListingGrid: React.FC<OptimizedListingGridProps> = ({
   const cacheKey = `listings-page-${currentPage}`;
 
   const paginatedListings = useMemo(() => {
-    const cached = getCachedData<any[]>(cacheKey);
+    const cached = getCachedData(cacheKey) as any[];
     if (cached) return cached;
 
     const start = (currentPage - 1) * itemsPerPage;
@@ -57,7 +57,7 @@ const OptimizedListingGrid: React.FC<OptimizedListingGridProps> = ({
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {paginatedListings.map((listing) => (
+        {paginatedListings && paginatedListings.map((listing) => (
           <Card 
             key={listing.id} 
             className="group hover:shadow-lg transition-all duration-300 transform hover:scale-105 border border-border"

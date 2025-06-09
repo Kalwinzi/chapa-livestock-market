@@ -1,6 +1,13 @@
 
 import { useEffect, useRef } from 'react';
 
+// Extend Window interface to include gtag
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
 interface PerformanceMetrics {
   pageLoadTime: number;
   renderTime: number;

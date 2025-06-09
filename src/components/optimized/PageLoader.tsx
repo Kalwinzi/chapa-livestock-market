@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 interface PageLoaderProps {
   isLoading: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   loadingText?: string;
 }
