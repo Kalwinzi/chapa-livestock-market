@@ -30,8 +30,8 @@ export const useAdminData = () => {
     try {
       setLoading(true);
 
-      // Fetch comprehensive stats with timeout protection
-      const fetchWithTimeout = (promise: Promise<any>, timeout = 5000) => {
+      // Fetch comprehensive stats with proper promise handling
+      const fetchWithTimeout = (promise: Promise<any>, timeout = 3000) => {
         return Promise.race([
           promise,
           new Promise((_, reject) => 
@@ -40,42 +40,62 @@ export const useAdminData = () => {
         ]);
       };
 
-      const [
-        { count: usersCount },
-        { count: livestockCount },
-        { count: ordersCount },
-        { data: ordersData },
-        { count: pendingCount },
-        { count: messagesCount },
-        { count: activeUsersCount },
-        { count: completedOrdersCount }
-      ] = await Promise.allSettled([
-        fetchWithTimeout(supabase.from('profiles').select('*', { count: 'exact', head: true })),
-        fetchWithTimeout(supabase.from('livestock').select('*', { count: 'exact', head: true })),
-        fetchWithTimeout(supabase.from('orders').select('*', { count: 'exact', head: true })),
-        fetchWithTimeout(supabase.from('orders').select('total_amount')),
-        fetchWithTimeout(supabase.from('livestock').select('*', { count: 'exact', head: true }).eq('verified', false)),
-        fetchWithTimeout(supabase.from('messages').select('*', { count: 'exact', head: true })),
-        fetchWithTimeout(supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('user_type', 'seller')),
-        fetchWithTimeout(supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'completed'))
-      ]).then(results => results.map(result => 
-        result.status === 'fulfilled' ? result.value : { count: 0, data: [] }
-      )) as any[];
+      // Create proper promises from Supabase queries
+      const userCountQuery = supabase.from('profiles').select('*', { count: 'exact', head: true });
+      const livestockCountQuery = supabase.from('livestock').select('*', { count: 'exact', head: true });
+      const ordersCountQuery = supabase.from('orders').select('*', { count: 'exact', head: true });
+      const ordersDataQuery = supabase.from('orders').select('total_amount');
+      const pendingCountQuery = supabase.from('livestock').select('*', { count: 'exact', head: true }).eq('verified', false);
+      const messagesCountQuery = supabase.from('messages').select('*', { count: 'exact', head: true });
+      const activeUsersCountQuery = supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('user_type', 'seller');
+      const completedOrdersCountQuery = supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'completed');
 
-      const totalRevenue = ordersData?.reduce((sum: number, order: any) => sum + parseFloat(order.total_amount || '0'), 0) || 0;
+      const results = await Promise.allSettled([
+        fetchWithTimeout(userCountQuery),
+        fetchWithTimeout(livestockCountQuery),
+        fetchWithTimeout(ordersCountQuery),
+        fetchWithTimeout(ordersDataQuery),
+        fetchWithTimeout(pendingCountQuery),
+        fetchWithTimeout(messagesCountQuery),
+        fetchWithTimeout(activeUsersCountQuery),
+        fetchWithTimeout(completedOrdersCountQuery)
+      ]);
+
+      // Process results safely
+      const processResult = (result: any) => {
+        if (result.status === 'fulfilled' && result.value && !result.value.error) {
+          return result.value;
+        }
+        return { count: 0, data: [] };
+      };
+
+      const [
+        usersResult,
+        livestockResult,
+        ordersResult,
+        ordersDataResult,
+        pendingResult,
+        messagesResult,
+        activeUsersResult,
+        completedOrdersResult
+      ] = results.map(processResult);
+
+      const totalRevenue = ordersDataResult.data?.reduce((sum: number, order: any) => {
+        return sum + parseFloat(order.total_amount || '0');
+      }, 0) || 0;
 
       setStats({
-        totalUsers: usersCount || 0,
-        totalListings: livestockCount || 0,
-        totalOrders: ordersCount || 0,
+        totalUsers: usersResult.count || 0,
+        totalListings: livestockResult.count || 0,
+        totalOrders: ordersResult.count || 0,
         monthlyRevenue: totalRevenue,
-        pendingApprovals: pendingCount || 0,
-        activeMessages: messagesCount || 0,
-        activeUsers: activeUsersCount || 0,
-        completedOrders: completedOrdersCount || 0
+        pendingApprovals: pendingResult.count || 0,
+        activeMessages: messagesResult.count || 0,
+        activeUsers: activeUsersResult.count || 0,
+        completedOrders: completedOrdersResult.count || 0
       });
 
-      // Fetch detailed data in parallel but don't block main stats
+      // Fetch detailed data in background - don't block main loading
       Promise.all([
         fetchUsers(),
         fetchLivestock(),
@@ -108,7 +128,7 @@ export const useAdminData = () => {
         .order('created_at', { ascending: false })
         .limit(100);
       
-      if (!error) setUsers(data || []);
+      if (!error && data) setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -125,7 +145,7 @@ export const useAdminData = () => {
         .order('created_at', { ascending: false })
         .limit(100);
       
-      if (!error) setLivestock(data || []);
+      if (!error && data) setLivestock(data);
     } catch (error) {
       console.error('Error fetching livestock:', error);
     }
@@ -144,7 +164,7 @@ export const useAdminData = () => {
         .order('created_at', { ascending: false })
         .limit(100);
       
-      if (!error) setOrders(data || []);
+      if (!error && data) setOrders(data);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
@@ -163,7 +183,7 @@ export const useAdminData = () => {
         .order('created_at', { ascending: false })
         .limit(100);
       
-      if (!error) setMessages(data || []);
+      if (!error && data) setMessages(data);
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -177,7 +197,7 @@ export const useAdminData = () => {
         .order('created_at', { ascending: false })
         .limit(50);
       
-      if (!error) setStories(data || []);
+      if (!error && data) setStories(data);
     } catch (error) {
       console.error('Error fetching stories:', error);
     }
@@ -195,7 +215,7 @@ export const useAdminData = () => {
         .order('created_at', { ascending: false })
         .limit(100);
       
-      if (!error) setTransactions(data || []);
+      if (!error && data) setTransactions(data);
     } catch (error) {
       console.error('Error fetching transactions:', error);
     }
@@ -209,7 +229,7 @@ export const useAdminData = () => {
         .order('created_at', { ascending: false })
         .limit(100);
       
-      if (!error) setAnalytics(data || []);
+      if (!error && data) setAnalytics(data);
     } catch (error) {
       console.error('Error fetching analytics:', error);
     }

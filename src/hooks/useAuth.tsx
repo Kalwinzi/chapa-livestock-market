@@ -29,26 +29,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
       
-      console.log('Auth event:', event, session)
+      console.log('Auth state changed:', event, session?.user?.email)
       setSession(session)
       setUser(session?.user ?? null)
       
       if (session?.user) {
-        // Check if user is admin - direct check for the specific admin email
-        if (session.user.email === 'kalwinzic@gmail.com') {
-          // Verify the user exists in profiles table with admin role
-          try {
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('user_type')
-              .eq('id', session.user.id)
-              .single()
-            
-            setIsAdmin(profile?.user_type === 'admin' && session.user.email === 'kalwinzic@gmail.com')
-          } catch (error) {
-            console.error('Error checking admin status:', error)
-            setIsAdmin(false)
-          }
+        // Check if user is admin - optimized check
+        const isAdminUser = session.user.email === 'kalwinzic@gmail.com';
+        if (isAdminUser) {
+          // Quick admin verification without blocking
+          setTimeout(async () => {
+            try {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('user_type')
+                .eq('id', session.user.id)
+                .single()
+              
+              if (mounted) {
+                setIsAdmin(profile?.user_type === 'admin' && session.user.email === 'kalwinzic@gmail.com')
+              }
+            } catch (error) {
+              console.error('Error checking admin status:', error)
+              if (mounted) setIsAdmin(false)
+            }
+          }, 100)
         } else {
           setIsAdmin(false)
         }
@@ -56,13 +61,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAdmin(false)
       }
       
-      // Reduce loading time
+      // Quick loading resolution
       if (mounted) {
         setLoading(false)
       }
     })
 
-    // Check for existing session with faster timeout
+    // Check for existing session immediately
     const initializeAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -78,10 +83,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Auth initialization error:', error)
       } finally {
         if (mounted) {
-          // Ensure loading stops even if there's an error
+          // Ensure loading stops quickly
           setTimeout(() => {
             if (mounted) setLoading(false)
-          }, 1000) // Maximum 1 second loading
+          }, 500) // Maximum 500ms loading
         }
       }
     }

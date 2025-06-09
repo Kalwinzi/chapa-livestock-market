@@ -17,7 +17,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
         <div className="text-center space-y-4 max-w-md mx-auto p-6">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <h3 className="text-lg font-semibold">Loading ChapaMarket...</h3>
-          <p className="text-muted-foreground">Please wait while we prepare your experience</p>
+          <p className="text-muted-foreground">Preparing your livestock marketplace experience</p>
           <div className="space-y-2">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4 mx-auto" />
