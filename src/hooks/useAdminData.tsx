@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -30,35 +29,16 @@ export const useAdminData = () => {
     try {
       setLoading(true);
 
-      // Fetch comprehensive stats with proper promise handling
-      const fetchWithTimeout = (promise: Promise<any>, timeout = 3000) => {
-        return Promise.race([
-          promise,
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Request timeout')), timeout)
-          )
-        ]);
-      };
-
-      // Create proper promises from Supabase queries
-      const userCountQuery = supabase.from('profiles').select('*', { count: 'exact', head: true });
-      const livestockCountQuery = supabase.from('livestock').select('*', { count: 'exact', head: true });
-      const ordersCountQuery = supabase.from('orders').select('*', { count: 'exact', head: true });
-      const ordersDataQuery = supabase.from('orders').select('total_amount');
-      const pendingCountQuery = supabase.from('livestock').select('*', { count: 'exact', head: true }).eq('verified', false);
-      const messagesCountQuery = supabase.from('messages').select('*', { count: 'exact', head: true });
-      const activeUsersCountQuery = supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('user_type', 'seller');
-      const completedOrdersCountQuery = supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'completed');
-
+      // Create proper promises by executing the queries
       const results = await Promise.allSettled([
-        fetchWithTimeout(userCountQuery),
-        fetchWithTimeout(livestockCountQuery),
-        fetchWithTimeout(ordersCountQuery),
-        fetchWithTimeout(ordersDataQuery),
-        fetchWithTimeout(pendingCountQuery),
-        fetchWithTimeout(messagesCountQuery),
-        fetchWithTimeout(activeUsersCountQuery),
-        fetchWithTimeout(completedOrdersCountQuery)
+        supabase.from('profiles').select('*', { count: 'exact', head: true }),
+        supabase.from('livestock').select('*', { count: 'exact', head: true }),
+        supabase.from('orders').select('*', { count: 'exact', head: true }),
+        supabase.from('orders').select('total_amount'),
+        supabase.from('livestock').select('*', { count: 'exact', head: true }).eq('verified', false),
+        supabase.from('messages').select('*', { count: 'exact', head: true }),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('user_type', 'seller'),
+        supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'completed')
       ]);
 
       // Process results safely
@@ -95,7 +75,7 @@ export const useAdminData = () => {
         completedOrders: completedOrdersResult.count || 0
       });
 
-      // Fetch detailed data in background - don't block main loading
+      // Fetch detailed data in background
       Promise.all([
         fetchUsers(),
         fetchLivestock(),

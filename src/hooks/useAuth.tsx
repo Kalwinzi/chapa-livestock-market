@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let mounted = true;
 
-    // Set up auth state listener first
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
       
@@ -34,36 +34,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null)
       
       if (session?.user) {
-        // Check if user is admin - optimized check
+        // Check if user is admin - specifically for kalwinzic@gmail.com
         const isAdminUser = session.user.email === 'kalwinzic@gmail.com';
+        setIsAdmin(isAdminUser);
+        
         if (isAdminUser) {
-          // Quick admin verification without blocking
-          setTimeout(async () => {
-            try {
-              const { data: profile } = await supabase
-                .from('profiles')
-                .select('user_type')
-                .eq('id', session.user.id)
-                .single()
-              
-              if (mounted) {
-                setIsAdmin(profile?.user_type === 'admin' && session.user.email === 'kalwinzic@gmail.com')
-              }
-            } catch (error) {
-              console.error('Error checking admin status:', error)
-              if (mounted) setIsAdmin(false)
+          // Ensure admin profile exists in database
+          try {
+            const { error } = await supabase
+              .from('profiles')
+              .upsert({
+                id: session.user.id,
+                email: session.user.email,
+                user_type: 'admin',
+                first_name: 'Admin',
+                last_name: 'User'
+              }, {
+                onConflict: 'id'
+              })
+            
+            if (error) {
+              console.error('Error updating admin profile:', error)
             }
-          }, 100)
-        } else {
-          setIsAdmin(false)
+          } catch (error) {
+            console.error('Error ensuring admin profile:', error)
+          }
         }
       } else {
         setIsAdmin(false)
       }
       
-      // Quick loading resolution
+      // Quick loading resolution - max 500ms
       if (mounted) {
-        setLoading(false)
+        setTimeout(() => {
+          if (mounted) setLoading(false)
+        }, Math.min(500, 200))
       }
     })
 
@@ -79,14 +84,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         setSession(session)
         setUser(session?.user ?? null)
+        
+        // Quick admin check
+        if (session?.user?.email === 'kalwinzic@gmail.com') {
+          setIsAdmin(true)
+        }
       } catch (error) {
         console.error('Auth initialization error:', error)
       } finally {
         if (mounted) {
-          // Ensure loading stops quickly
+          // Ensure loading stops quickly - max 500ms
           setTimeout(() => {
             if (mounted) setLoading(false)
-          }, 500) // Maximum 500ms loading
+          }, 500)
         }
       }
     }
@@ -100,6 +110,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [])
 
   const signIn = async (email: string, password: string) => {
+    setLoading(true)
+    
     const result = await supabase.auth.signInWithPassword({ email, password })
     
     // If this is the admin email, ensure they're marked as admin in the database
@@ -110,15 +122,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .upsert({
             id: result.data.user?.id,
             email: email,
-            user_type: 'admin'
+            user_type: 'admin',
+            first_name: 'Admin',
+            last_name: 'User'
           }, {
             onConflict: 'id'
           })
+        setIsAdmin(true)
       } catch (error) {
         console.error('Error updating admin profile:', error)
       }
     }
     
+    setLoading(false)
     return result
   }
 

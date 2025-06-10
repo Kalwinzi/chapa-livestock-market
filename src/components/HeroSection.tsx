@@ -136,16 +136,16 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Right Content - Hero Image with Rwandan livestock landscape */}
+          {/* Right Content - Hero Image with your uploaded livestock */}
           <div className={`relative transition-all duration-1200 delay-300 ${
             heroVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
           }`}>
             <div className="relative animate-float">
-              {/* Main Image - Beautiful Rwanda landscape with mixed livestock including cows, goats, and sheep */}
+              {/* Main Image - Using your uploaded dairy cows image */}
               <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
                 <img
-                  src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&h=600&fit=crop&crop=center"
-                  alt="Beautiful Rwandan landscape with cows, goats and sheep grazing peacefully in lush green rolling hills"
+                  src="/lovable-uploads/3c56169f-0372-418f-823a-8d738d0d35b2.png"
+                  alt="Professional dairy cattle in modern farming facility - showcasing quality livestock"
                   className="w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center"
                   loading="lazy"
                 />
