@@ -1,27 +1,5 @@
 
-export interface LivestockItem {
-  id: number;
-  name: string;
-  category: string;
-  price: string;
-  image: string;
-  location: string;
-  verified: boolean;
-  featured?: boolean;
-  details: {
-    breed: string;
-    age: string;
-    gender: string;
-    type: string;
-    weight: string;
-  };
-  seller: {
-    name: string;
-    phone: string;
-    rating: number;
-    description: string;
-  };
-}
+import { LivestockItem } from '@/types/livestock';
 
 export const allLivestockData: LivestockItem[] = [
   {
@@ -245,36 +223,3 @@ export const allLivestockData: LivestockItem[] = [
     }
   }
 ];
-
-export const livestockCategories = [
-  { name: "Cattle", icon: "🐄", count: "2,450+" },
-  { name: "Goats", icon: "🐐", count: "1,800+" },
-  { name: "Sheep", icon: "🐑", count: "1,200+" },
-  { name: "Pigs", icon: "🐷", count: "850+" },
-  { name: "Poultry", icon: "🐔", count: "3,200+" },
-  { name: "Others", icon: "🦙", count: "400+" }
-];
-
-export const getFeaturedLivestock = () => {
-  return allLivestockData.filter(item => item.verified).slice(0, 6);
-};
-
-export const getLivestockByCategory = (category: string): LivestockItem[] => {
-  return allLivestockData.filter(item => item.category === category);
-};
-
-export const searchLivestock = (query: string, country?: string): LivestockItem[] => {
-  const searchTerm = query.toLowerCase();
-  
-  return allLivestockData.filter(item => {
-    const matchesQuery = 
-      item.name.toLowerCase().includes(searchTerm) ||
-      item.category.toLowerCase().includes(searchTerm) ||
-      item.details.breed.toLowerCase().includes(searchTerm) ||
-      item.details.type.toLowerCase().includes(searchTerm);
-    
-    const matchesCountry = !country || item.location.toLowerCase().includes(country.toLowerCase());
-    
-    return matchesQuery && matchesCountry;
-  });
-};
