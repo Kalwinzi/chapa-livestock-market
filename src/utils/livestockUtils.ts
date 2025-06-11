@@ -10,7 +10,7 @@ export const getLivestockByCategory = (category: string): LivestockItem[] => {
   return allLivestockData.filter(item => item.category === category);
 };
 
-export const searchLivestock = (query: string, country?: string): LivestockItem[] => {
+export const searchLivestock = (query: string, location?: string): LivestockItem[] => {
   const searchTerm = query.toLowerCase();
   
   return allLivestockData.filter(item => {
@@ -20,8 +20,8 @@ export const searchLivestock = (query: string, country?: string): LivestockItem[
       item.details.breed.toLowerCase().includes(searchTerm) ||
       item.details.type.toLowerCase().includes(searchTerm);
     
-    const matchesCountry = !country || item.location.toLowerCase().includes(country.toLowerCase());
+    const matchesLocation = !location || item.location.toLowerCase().includes(location.toLowerCase());
     
-    return matchesQuery && matchesCountry;
+    return matchesQuery && matchesLocation;
   });
 };

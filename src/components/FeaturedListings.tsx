@@ -6,7 +6,7 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useToast } from '@/hooks/use-toast';
 import { useFavorites } from '@/hooks/useFavorites';
 import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
-import { getFeaturedLivestock, allLivestockData } from '@/data/livestockData';
+import { getFeaturedLivestock, allLivestockData } from '@/data';
 import BuyerContactForm from './BuyerContactForm';
 import LazyImage from './optimized/LazyImage';
 import OptimizedListingGrid from './optimized/OptimizedListingGrid';

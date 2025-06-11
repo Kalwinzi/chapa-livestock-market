@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { livestockCategories } from '@/data/livestockData';
+import { livestockCategories } from '@/data/livestockCategories';
 import { useToast } from '@/hooks/use-toast';
 import CategoryPage from './CategoryPage';
 
