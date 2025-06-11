@@ -9,6 +9,7 @@ import CategoriesSection from '../components/CategoriesSection';
 import FeaturesSection from '../components/FeaturesSection';
 import FeaturedListings from '../components/FeaturedListings';
 import HowItWorksSimple from '../components/HowItWorksSimple';
+import PremiumSection from '../components/PremiumSection';
 import StoriesSection from '../components/StoriesSection';
 import TestimonialsSection from '../components/TestimonialsSection';
 import CallToActionSection from '../components/CallToActionSection';
@@ -30,6 +31,7 @@ const Index = () => {
         <FeaturesSection />
         <FeaturedListings />
         <HowItWorksSimple />
+        <PremiumSection />
         <StoriesSection />
         <TestimonialsSection />
         <CallToActionSection />

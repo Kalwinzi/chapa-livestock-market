@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { MapPin, ShoppingCart, Eye, Heart } from 'lucide-react';
+import { MapPin, ShoppingCart, Eye, Heart, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useToast } from '@/hooks/use-toast';
+import { enhancedLivestockData } from '@/data/enhancedLivestockItems';
 
 const FeaturedListings = () => {
   const { elementRef: titleRef, isVisible: titleVisible } = useScrollAnimation<HTMLHeadingElement>();
@@ -12,53 +13,8 @@ const FeaturedListings = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  // Sample data to prevent blocking
-  const featuredListings = [
-    {
-      id: 1,
-      name: "Premium Holstein Cow",
-      category: "Cattle",
-      price: "TSH 2,500,000",
-      image: "https://images.unsplash.com/photo-1560114928-40f1f1eb26a0?w=400",
-      location: "Mbeya, Tanzania",
-      verified: true,
-      details: {
-        breed: "Holstein",
-        age: "3 years",
-        gender: "Female",
-        type: "Dairy",
-        weight: "450kg"
-      },
-      seller: {
-        name: "John Mwakasege",
-        phone: "+255 765 123 456",
-        rating: 4.8,
-        description: "Experienced dairy farmer"
-      }
-    },
-    {
-      id: 2,
-      name: "Local Goats",
-      category: "Goats",
-      price: "TSH 350,000",
-      image: "https://images.unsplash.com/photo-1533318087102-b3ad366ed041?w=400",
-      location: "Dodoma, Tanzania",
-      verified: true,
-      details: {
-        breed: "Local",
-        age: "2 years",
-        gender: "Mixed",
-        type: "Meat",
-        weight: "35kg"
-      },
-      seller: {
-        name: "Maria Kimaro",
-        phone: "+255 754 987 654",
-        rating: 4.6,
-        description: "Small scale farmer"
-      }
-    }
-  ];
+  // Get featured listings from enhanced data
+  const featuredListings = enhancedLivestockData.filter(item => item.featured).slice(0, 6);
 
   const handleLocationClick = (location: string) => {
     toast({
@@ -82,10 +38,10 @@ const FeaturedListings = () => {
   };
 
   const handleViewMore = () => {
-    toast({
-      title: "View More Listings",
-      description: "Loading more livestock listings...",
-    });
+    const categoriesSection = document.querySelector('#categories');
+    if (categoriesSection) {
+      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -130,6 +86,12 @@ const FeaturedListings = () => {
                 {item.verified && (
                   <div className="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs">
                     ✓ Verified
+                  </div>
+                )}
+                {item.featured && (
+                  <div className="absolute top-3 left-3 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                    <Crown className="w-3 h-3" />
+                    Featured
                   </div>
                 )}
               </div>
@@ -193,7 +155,7 @@ const FeaturedListings = () => {
                 Loading...
               </>
             ) : (
-              `View More Listings (100+ Available)`
+              `View All Categories (${enhancedLivestockData.length}+ Animals Available)`
             )}
           </Button>
         </div>

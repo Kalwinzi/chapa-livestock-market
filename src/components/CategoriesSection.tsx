@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { livestockCategories } from '@/data/livestockCategories';
+import { enhancedLivestockCategories } from '@/data/enhancedLivestockItems';
 import { useToast } from '@/hooks/use-toast';
 import CategoryPage from './CategoryPage';
 
@@ -31,12 +31,12 @@ const CategoriesSection = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Browse by Category</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover a wide range of livestock categories with thousands of verified listings
+            Discover a wide range of livestock categories with thousands of verified listings across Tanzania
           </p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {livestockCategories.map((category, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
+          {enhancedLivestockCategories.map((category, index) => (
             <div
               key={category.name}
               onClick={() => handleCategoryClick(category.name, category.count)}
@@ -47,7 +47,7 @@ const CategoriesSection = () => {
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">{category.name}</h3>
               <p className="text-2xl font-bold text-primary-500 mb-1">{category.count}</p>
-              <p className="text-sm text-muted-foreground">Available</p>
+              <p className="text-xs text-muted-foreground mb-2">{category.description}</p>
               <div className="mt-3 text-xs text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity">
                 Click to browse →
               </div>

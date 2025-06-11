@@ -3,8 +3,8 @@ import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search, Filter, MapPin, Heart, Eye, ShoppingCart } from 'lucide-react';
-import { getLivestockByCategory, searchLivestock, type LivestockItem } from '@/data';
+import { Search, Filter, MapPin, Heart, Eye, ShoppingCart, Crown } from 'lucide-react';
+import { enhancedLivestockData } from '@/data/enhancedLivestockItems';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useToast } from '@/hooks/use-toast';
 import BuyerContactForm from './BuyerContactForm';
@@ -16,27 +16,31 @@ interface CategoryPageProps {
 
 const CategoryPage: React.FC<CategoryPageProps> = ({ category, onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLivestock, setSelectedLivestock] = useState<LivestockItem | null>(null);
+  const [selectedLivestock, setSelectedLivestock] = useState<any>(null);
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const { favorites, toggleFavorite } = useFavorites();
   const { toast } = useToast();
 
   const filteredListings = useMemo(() => {
-    let listings = getLivestockByCategory(category);
+    let listings = enhancedLivestockData.filter(item => item.category === category);
     
     if (searchQuery) {
-      listings = searchLivestock(searchQuery).filter(item => item.category === category);
+      listings = listings.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.details.breed.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.location.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
     
     return listings;
   }, [category, searchQuery]);
 
-  const handleContactSeller = (item: LivestockItem) => {
+  const handleContactSeller = (item: any) => {
     setSelectedLivestock(item);
     setIsContactFormOpen(true);
   };
 
-  const handleViewDetails = (item: LivestockItem) => {
+  const handleViewDetails = (item: any) => {
     toast({
       title: "Livestock Details",
       description: `${item.name} - ${item.details.breed}, ${item.details.age}, ${item.details.gender}`,
@@ -54,7 +58,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category, onBack }) => {
             </Button>
             <h1 className="text-3xl font-bold text-foreground">{category} Listings</h1>
             <p className="text-muted-foreground">
-              {filteredListings.length} {category.toLowerCase()} available
+              {filteredListings.length} {category.toLowerCase()} available across Tanzania
             </p>
           </div>
         </div>
@@ -87,9 +91,15 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category, onBack }) => {
                     Verified
                   </div>
                 )}
+                {item.featured && (
+                  <div className="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                    <Crown className="w-3 h-3" />
+                    Featured
+                  </div>
+                )}
                 <button
                   onClick={() => toggleFavorite(item.id.toString())}
-                  className="absolute top-2 left-2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
+                  className="absolute bottom-2 right-2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
                 >
                   <Heart
                     className={`h-4 w-4 ${

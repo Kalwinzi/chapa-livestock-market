@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Menu } from 'lucide-react';
+import { Menu, Crown } from 'lucide-react';
 import AuthModal from './AuthModal';
 import AdminPanel from './AdminPanel';
 
@@ -12,32 +13,71 @@ const Header = () => {
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const { user, signOut, isAdmin } = useAuth();
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.querySelector(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      // Clear any cached data
+      localStorage.removeItem('chapamarket_user');
+      sessionStorage.clear();
+      window.location.reload();
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-bold text-primary">ChapaMarket</h1>
+          <h1 className="text-xl font-bold text-primary-500">ChapaMarket</h1>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#home" className="text-sm font-medium hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection('#home')}
+              className="text-sm font-medium hover:text-primary-500 transition-colors"
+            >
               Home
-            </a>
-            <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#about')}
+              className="text-sm font-medium hover:text-primary-500 transition-colors"
+            >
               About
-            </a>
-            <a href="#search" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#search')}
+              className="text-sm font-medium hover:text-primary-500 transition-colors"
+            >
               Search
-            </a>
-            <a href="#categories" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#categories')}
+              className="text-sm font-medium hover:text-primary-500 transition-colors"
+            >
               Categories
-            </a>
-            <a href="#premium" className="text-sm font-medium hover:text-primary transition-colors text-yellow-600 font-semibold">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#premium')}
+              className="text-sm font-medium hover:text-primary-500 transition-colors text-yellow-600 font-semibold flex items-center gap-1"
+            >
+              <Crown className="h-4 w-4" />
               Premium
-            </a>
-            <a href="#contact" className="text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#contact')}
+              className="text-sm font-medium hover:text-primary-500 transition-colors"
+            >
               Contact
-            </a>
+            </button>
           </nav>
         </div>
 
@@ -47,7 +87,7 @@ const Header = () => {
           {user ? (
             <div className="flex items-center space-x-2">
               <span className="text-sm">
-                Welcome, {user.user_metadata?.first_name || 'User'}
+                Welcome, {user.user_metadata?.first_name || user.email?.split('@')[0] || 'User'}
               </span>
               {isAdmin && (
                 <Button
@@ -59,7 +99,7 @@ const Header = () => {
                   Admin
                 </Button>
               )}
-              <Button variant="outline" size="sm" onClick={signOut}>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
                 Sign Out
               </Button>
             </div>
@@ -84,24 +124,43 @@ const Header = () => {
       {mobileMenuOpen && (
         <div className="md:hidden border-t bg-background">
           <nav className="container py-4 space-y-2">
-            <a href="#home" className="block py-2 text-sm font-medium hover:text-primary transition-colors">
+            <button 
+              onClick={() => scrollToSection('#home')}
+              className="block py-2 text-sm font-medium hover:text-primary-500 transition-colors w-full text-left"
+            >
               Home
-            </a>
-            <a href="#about" className="block py-2 text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#about')}
+              className="block py-2 text-sm font-medium hover:text-primary-500 transition-colors w-full text-left"
+            >
               About
-            </a>
-            <a href="#search" className="block py-2 text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#search')}
+              className="block py-2 text-sm font-medium hover:text-primary-500 transition-colors w-full text-left"
+            >
               Search
-            </a>
-            <a href="#categories" className="block py-2 text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#categories')}
+              className="block py-2 text-sm font-medium hover:text-primary-500 transition-colors w-full text-left"
+            >
               Categories
-            </a>
-            <a href="#premium" className="block py-2 text-sm font-medium hover:text-primary transition-colors text-yellow-600 font-semibold">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#premium')}
+              className="block py-2 text-sm font-medium hover:text-primary-500 transition-colors text-yellow-600 font-semibold w-full text-left flex items-center gap-1"
+            >
+              <Crown className="h-4 w-4" />
               Premium
-            </a>
-            <a href="#contact" className="block py-2 text-sm font-medium hover:text-primary transition-colors">
+            </button>
+            <button 
+              onClick={() => scrollToSection('#contact')}
+              className="block py-2 text-sm font-medium hover:text-primary-500 transition-colors w-full text-left"
+            >
               Contact
-            </a>
+            </button>
           </nav>
         </div>
       )}
