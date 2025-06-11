@@ -13,7 +13,8 @@ import {
   Settings,
   MessageCircle,
   AlertTriangle,
-  Image
+  Image,
+  Crown
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -34,6 +35,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActiveTab }) 
     { id: 'reports', label: 'Reports', icon: AlertTriangle },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'premium', label: 'Premium', icon: Crown },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 

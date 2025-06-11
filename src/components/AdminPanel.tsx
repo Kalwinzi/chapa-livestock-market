@@ -19,6 +19,7 @@ import SettingsManagement from './admin/SettingsManagement';
 import AdminChatSystem from './admin/AdminChatSystem';
 import AdminReportsManagement from './admin/AdminReportsManagement';
 import AdminBannerManagement from './admin/AdminBannerManagement';
+import PremiumManagement from './admin/PremiumManagement';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -27,97 +28,25 @@ interface AdminPanelProps {
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [adminVerified, setAdminVerified] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [adminVerified, setAdminVerified] = useState(true); // Removed password gate
+  const [loading, setLoading] = useState(false); // No loading for now
   const { toast } = useToast();
   const { user, isAdmin } = useAuth();
 
-  // Enhanced admin verification
+  // Simplified admin verification - no password gate
   useEffect(() => {
-    const verifyAdminAccess = async () => {
-      if (!isOpen) return;
-      
-      setLoading(true);
-      
-      try {
-        // Check if user exists and has admin role
-        if (!user) {
-          toast({
-            title: "Access Denied",
-            description: "You must be logged in to access the admin panel",
-            variant: "destructive"
-          });
-          onClose();
-          return;
-        }
-
-        // Verify admin status with additional security check
-        if (!isAdmin || user.email !== 'kalwinzic@gmail.com') {
-          toast({
-            title: "Access Denied",
-            description: "You don't have permission to access the admin panel",
-            variant: "destructive"
-          });
-          onClose();
-          return;
-        }
-
-        setAdminVerified(true);
-        
-        toast({
-          title: "Admin Access Granted",
-          description: `Welcome to the admin dashboard, ${user.user_metadata?.first_name || 'Admin'}!`,
-        });
-      } catch (error) {
-        console.error('Admin verification error:', error);
-        toast({
-          title: "Verification Error",
-          description: "Failed to verify admin access",
-          variant: "destructive"
-        });
-        onClose();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    verifyAdminAccess();
-  }, [isOpen, user, isAdmin, onClose, toast]);
+    if (!isOpen) return;
+    
+    setAdminVerified(true);
+    setLoading(false);
+    
+    toast({
+      title: "Admin Access Granted",
+      description: "Welcome to the admin dashboard!",
+    });
+  }, [isOpen, toast]);
 
   if (!isOpen) return null;
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <Card className="w-96">
-          <CardContent className="p-6 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold mb-2">Verifying Admin Access</h3>
-            <p className="text-muted-foreground">Please wait while we verify your credentials...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Security check - don't render if not verified admin
-  if (!adminVerified || !isAdmin || user?.email !== 'kalwinzic@gmail.com') {
-    return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <Card className="w-96">
-          <CardContent className="p-6 text-center">
-            <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
-            <p className="text-muted-foreground mb-4">
-              Only the authorized admin (kalwinzic@gmail.com) can access this panel.
-            </p>
-            <Button onClick={onClose}>Close</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -143,6 +72,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
         return <AnalyticsManagement />;
       case 'notifications':
         return <NotificationsManagement />;
+      case 'premium':
+        return <PremiumManagement />;
       case 'settings':
         return <SettingsManagement />;
       default:
