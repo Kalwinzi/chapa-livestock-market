@@ -1,56 +1,62 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, MapPin, Filter } from 'lucide-react';
-import { searchLivestock } from '@/data';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useToast } from '@/hooks/use-toast';
 
 const SearchSection = () => {
+  const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation<HTMLElement>();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const { elementRef, isVisible } = useScrollAnimation<HTMLElement>();
+  const [priceRange, setPriceRange] = useState('');
   const { toast } = useToast();
 
-  const searchResults = useMemo(() => {
-    if (!searchQuery && !selectedLocation && !selectedCategory) return [];
-    
-    let results = searchLivestock(searchQuery, selectedLocation);
-    
-    if (selectedCategory) {
-      results = results.filter(item => item.category === selectedCategory);
-    }
-    
-    return results;
-  }, [searchQuery, selectedLocation, selectedCategory]);
+  const locations = [
+    'Dar es Salaam', 'Mwanza', 'Arusha', 'Dodoma', 'Mbeya', 
+    'Morogoro', 'Tanga', 'Kahama', 'Tabora', 'Kigoma'
+  ];
+
+  const categories = [
+    'Cattle', 'Goats', 'Sheep', 'Pigs', 'Poultry', 'Others'
+  ];
+
+  const priceRanges = [
+    'Under TSH 500,000',
+    'TSH 500,000 - 1,000,000',
+    'TSH 1,000,000 - 2,500,000',
+    'TSH 2,500,000 - 5,000,000',
+    'Above TSH 5,000,000'
+  ];
 
   const handleSearch = () => {
-    if (!searchQuery && !selectedLocation && !selectedCategory) {
-      toast({
-        title: "Search Required",
-        description: "Please enter a search term, select a location, or choose a category.",
-        variant: "destructive"
-      });
-      return;
-    }
+    const searchParams = {
+      query: searchQuery,
+      location: selectedLocation,
+      category: selectedCategory,
+      priceRange: priceRange
+    };
 
     toast({
-      title: "Search Results",
-      description: `Found ${searchResults.length} livestock matching your criteria.`,
+      title: "Search Initiated",
+      description: `Searching for ${searchQuery || 'livestock'} in ${selectedLocation || 'all locations'}`,
     });
+
+    console.log('Search parameters:', searchParams);
   };
 
-  const categories = ["Cattle", "Goats", "Sheep", "Pigs", "Poultry", "Others"];
-  const locations = ["Arusha", "Dar es Salaam", "Dodoma", "Mwanza", "Iringa", "Kilimanjaro", "Mbeya", "Morogoro", "Singida", "Tanga"];
-
   return (
-    <section ref={elementRef} id="search" className="py-16 bg-primary-50 dark:bg-gray-900/30">
+    <section 
+      ref={sectionRef}
+      id="search" 
+      className="py-16 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-gray-900 dark:to-gray-800"
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-12 transition-all duration-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          sectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Find Your Perfect Livestock
@@ -61,33 +67,30 @@ const SearchSection = () => {
         </div>
 
         <div className={`max-w-4xl mx-auto transition-all duration-700 delay-200 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          sectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <div className="bg-card border border-border rounded-2xl p-8 shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="md:col-span-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    placeholder="Search livestock, breeds, or types..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 h-12 text-lg"
-                  />
-                </div>
+          <div className="bg-card rounded-2xl shadow-lg p-6 border border-border">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search livestock..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-              
+
               <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-                <SelectTrigger className="h-12">
+                <SelectTrigger>
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <SelectValue placeholder="Location" />
+                    <SelectValue placeholder="Select location" />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Locations</SelectItem>
                   {locations.map((location) => (
-                    <SelectItem key={location} value={location.toLowerCase()}>
+                    <SelectItem key={location} value={location}>
                       {location}
                     </SelectItem>
                   ))}
@@ -95,14 +98,13 @@ const SearchSection = () => {
               </Select>
 
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="h-12">
+                <SelectTrigger>
                   <div className="flex items-center">
                     <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
                     <SelectValue placeholder="Category" />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -110,24 +112,31 @@ const SearchSection = () => {
                   ))}
                 </SelectContent>
               </Select>
+
+              <Select value={priceRange} onValueChange={setPriceRange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Price range" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priceRanges.map((range) => (
+                    <SelectItem key={range} value={range}>
+                      {range}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <Button 
-              onClick={handleSearch}
-              size="lg" 
-              className="w-full h-12 text-lg font-semibold"
-            >
-              <Search className="h-5 w-5 mr-2" />
-              Search Livestock
-            </Button>
-
-            {searchResults.length > 0 && (
-              <div className="mt-6 p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  <strong>{searchResults.length}</strong> livestock found matching your search criteria
-                </p>
-              </div>
-            )}
+            <div className="flex justify-center">
+              <Button 
+                onClick={handleSearch}
+                size="lg"
+                className="bg-primary-500 hover:bg-primary-600 text-white px-8"
+              >
+                <Search className="h-5 w-5 mr-2" />
+                Search Livestock
+              </Button>
+            </div>
           </div>
         </div>
       </div>
