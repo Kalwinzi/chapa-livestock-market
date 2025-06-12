@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          created_at: string
+          id: string
+          setting_key: string
+          setting_value: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          setting_key: string
+          setting_value?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          setting_key?: string
+          setting_value?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       analytics: {
         Row: {
           created_at: string
@@ -75,6 +99,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      homepage_banners: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          is_active: boolean | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       livestock: {
         Row: {
@@ -282,9 +336,13 @@ export type Database = {
           email: string | null
           first_name: string | null
           id: string
+          last_login: string | null
           last_name: string | null
           location: string | null
           phone: string | null
+          premium_expires_at: string | null
+          premium_status: boolean | null
+          status: string | null
           updated_at: string | null
           user_type: string | null
         }
@@ -294,9 +352,13 @@ export type Database = {
           email?: string | null
           first_name?: string | null
           id: string
+          last_login?: string | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
+          premium_expires_at?: string | null
+          premium_status?: boolean | null
+          status?: string | null
           updated_at?: string | null
           user_type?: string | null
         }
@@ -306,9 +368,13 @@ export type Database = {
           email?: string | null
           first_name?: string | null
           id?: string
+          last_login?: string | null
           last_name?: string | null
           location?: string | null
           phone?: string | null
+          premium_expires_at?: string | null
+          premium_status?: boolean | null
+          status?: string | null
           updated_at?: string | null
           user_type?: string | null
         }
@@ -319,10 +385,12 @@ export type Database = {
           author_id: string | null
           author_image: string | null
           author_name: string
+          category: string | null
           content: string
           created_at: string
           featured: boolean | null
           id: string
+          image_url: string | null
           status: string | null
           title: string
           updated_at: string
@@ -331,10 +399,12 @@ export type Database = {
           author_id?: string | null
           author_image?: string | null
           author_name: string
+          category?: string | null
           content: string
           created_at?: string
           featured?: boolean | null
           id?: string
+          image_url?: string | null
           status?: string | null
           title: string
           updated_at?: string
@@ -343,10 +413,12 @@ export type Database = {
           author_id?: string | null
           author_image?: string | null
           author_name?: string
+          category?: string | null
           content?: string
           created_at?: string
           featured?: boolean | null
           id?: string
+          image_url?: string | null
           status?: string | null
           title?: string
           updated_at?: string
@@ -396,6 +468,38 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          session_token: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          session_token: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          session_token?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

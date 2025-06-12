@@ -14,7 +14,10 @@ import {
   MessageCircle,
   AlertTriangle,
   Image,
-  Crown
+  Crown,
+  CreditCard,
+  LogOut,
+  Shield
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -31,11 +34,13 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActiveTab }) 
     { id: 'messages', label: 'Messages', icon: MessageSquare },
     { id: 'chat', label: 'Live Chat', icon: MessageCircle },
     { id: 'stories', label: 'Stories', icon: BookOpen },
-    { id: 'banners', label: 'Banners', icon: Image },
+    { id: 'banners', label: 'Homepage Banners', icon: Image },
+    { id: 'payment', label: 'Payment Config', icon: CreditCard },
     { id: 'reports', label: 'Reports', icon: AlertTriangle },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'premium', label: 'Premium', icon: Crown },
+    { id: 'sessions', label: 'Sessions', icon: Shield },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 

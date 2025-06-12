@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(false) // Start with false to prevent blocking
+  const [loading, setLoading] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
@@ -49,6 +49,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null)
       setIsAdmin(session?.user?.email === 'kalwinzic@gmail.com')
       setLoading(false)
+
+      // Update last login for users
+      if (event === 'SIGNED_IN' && session?.user) {
+        await supabase
+          .from('profiles')
+          .update({ last_login: new Date().toISOString() })
+          .eq('id', session.user.id)
+      }
+
+      // Clear session data on sign out
+      if (event === 'SIGNED_OUT') {
+        localStorage.clear()
+        sessionStorage.clear()
+      }
     })
 
     initializeAuth()
@@ -61,9 +75,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     setLoading(true)
-    const result = await supabase.auth.signInWithPassword({ email, password })
-    setLoading(false)
-    return result
+    try {
+      const result = await supabase.auth.signInWithPassword({ email, password })
+      return result
+    } finally {
+      setLoading(false)
+    }
   }
 
   const signUp = async (email: string, password: string, userData: any) => {
@@ -77,11 +94,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     setIsAdmin(false)
-    return await supabase.auth.signOut()
+    
+    // Clear all session data
+    localStorage.clear()
+    sessionStorage.clear()
+    
+    // Sign out from Supabase
+    const result = await supabase.auth.signOut()
+    
+    // Clear state
+    setUser(null)
+    setSession(null)
+    
+    return result
   }
 
   const signInWithProvider = async (provider: 'google' | 'facebook') => {
-    return await supabase.auth.signInWithOAuth({ provider })
+    return await supabase.auth.signInWithOAuth({ 
+      provider,
+      options: {
+        redirectTo: window.location.origin
+      }
+    })
   }
 
   return (

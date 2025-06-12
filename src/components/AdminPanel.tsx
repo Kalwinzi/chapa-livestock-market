@@ -1,15 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { X, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import AdminSidebar from './admin/AdminSidebar';
 import AdminHeader from './admin/AdminHeader';
 import AdminDashboard from './admin/AdminDashboard';
-import UserManagement from './admin/UserManagement';
-import LivestockManagement from './admin/LivestockManagement';
+import EnhancedUserManagement from './admin/EnhancedUserManagement';
+import EnhancedLivestockManagement from './admin/EnhancedLivestockManagement';
 import OrdersManagement from './admin/OrdersManagement';
 import MessagesManagement from './admin/MessagesManagement';
 import StoriesManagement from './admin/StoriesManagement';
@@ -18,8 +15,10 @@ import NotificationsManagement from './admin/NotificationsManagement';
 import SettingsManagement from './admin/SettingsManagement';
 import AdminChatSystem from './admin/AdminChatSystem';
 import AdminReportsManagement from './admin/AdminReportsManagement';
-import AdminBannerManagement from './admin/AdminBannerManagement';
+import HomepageBannerManager from './admin/HomepageBannerManager';
+import PaymentConfigurationManager from './admin/PaymentConfigurationManager';
 import PremiumManagement from './admin/PremiumManagement';
+import SessionManagement from './admin/SessionManagement';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -28,23 +27,8 @@ interface AdminPanelProps {
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [adminVerified, setAdminVerified] = useState(true); // Removed password gate
-  const [loading, setLoading] = useState(false); // No loading for now
   const { toast } = useToast();
   const { user, isAdmin } = useAuth();
-
-  // Simplified admin verification - no password gate
-  useEffect(() => {
-    if (!isOpen) return;
-    
-    setAdminVerified(true);
-    setLoading(false);
-    
-    toast({
-      title: "Admin Access Granted",
-      description: "Welcome to the admin dashboard!",
-    });
-  }, [isOpen, toast]);
 
   if (!isOpen) return null;
 
@@ -53,9 +37,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
       case 'dashboard':
         return <AdminDashboard />;
       case 'users':
-        return <UserManagement />;
+        return <EnhancedUserManagement />;
       case 'livestock':
-        return <LivestockManagement />;
+        return <EnhancedLivestockManagement />;
       case 'orders':
         return <OrdersManagement />;
       case 'messages':
@@ -65,7 +49,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
       case 'stories':
         return <StoriesManagement />;
       case 'banners':
-        return <AdminBannerManagement />;
+        return <HomepageBannerManager />;
+      case 'payment':
+        return <PaymentConfigurationManager />;
       case 'reports':
         return <AdminReportsManagement />;
       case 'analytics':
@@ -74,6 +60,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
         return <NotificationsManagement />;
       case 'premium':
         return <PremiumManagement />;
+      case 'sessions':
+        return <SessionManagement />;
       case 'settings':
         return <SettingsManagement />;
       default:
