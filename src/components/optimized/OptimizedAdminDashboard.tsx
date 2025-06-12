@@ -1,195 +1,153 @@
 
-import React, { useEffect, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { 
-  Users, ShoppingCart, DollarSign, AlertCircle, CheckCircle, 
-  Download, Loader2, TrendingUp, Activity 
-} from 'lucide-react';
-import { useOptimizedQuery } from '@/hooks/useOptimizedQuery';
-import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
-import { supabase } from '@/integrations/supabase/client';
-import PageLoader from './PageLoader';
+import React, { useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, Beef, ShoppingCart, Star, TrendingUp, Eye } from 'lucide-react';
+import { useAdminData } from '@/hooks/useAdminData';
 
 const OptimizedAdminDashboard: React.FC = () => {
-  usePerformanceMonitor('AdminDashboard');
+  const { loading, stats, fetchDashboardData } = useAdminData();
 
-  const { data: stats, isLoading: statsLoading } = useOptimizedQuery({
-    queryKey: ['admin-stats'],
-    queryFn: async () => {
-      const [
-        { count: usersCount },
-        { count: livestockCount },
-        { count: ordersCount },
-        { data: ordersData },
-        { count: pendingCount }
-      ] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('livestock').select('*', { count: 'exact', head: true }),
-        supabase.from('orders').select('*', { count: 'exact', head: true }),
-        supabase.from('orders').select('total_amount'),
-        supabase.from('livestock').select('*', { count: 'exact', head: true }).eq('verified', false)
-      ]);
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-      const totalRevenue = ordersData?.reduce((sum, order) => sum + parseFloat(order.total_amount || '0'), 0) || 0;
-
-      return {
-        totalUsers: usersCount || 0,
-        totalListings: livestockCount || 0,
-        totalOrders: ordersCount || 0,
-        monthlyRevenue: totalRevenue,
-        pendingApprovals: pendingCount || 0
-      };
-    },
-    staleTime: 2 * 60 * 1000 // 2 minutes
-  });
-
-  const { data: recentOrders, isLoading: ordersLoading } = useOptimizedQuery({
-    queryKey: ['recent-orders'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          buyer:buyer_id(first_name, last_name),
-          livestock:livestock_id(name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(5);
-      return data || [];
-    },
-    staleTime: 1 * 60 * 1000 // 1 minute
-  });
-
-  const statsCards = useMemo(() => [
+  const statCards = [
     {
       title: 'Total Users',
-      value: stats?.totalUsers || 0,
+      value: stats.totalUsers.toLocaleString(),
       icon: Users,
-      color: 'blue',
-      trend: '+12%'
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50 dark:bg-blue-950/20'
     },
     {
-      title: 'Livestock',
-      value: stats?.totalListings || 0,
+      title: 'Livestock Listings',
+      value: stats.totalListings.toLocaleString(),
+      icon: Beef,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50 dark:bg-green-950/20'
+    },
+    {
+      title: 'Total Orders',
+      value: stats.totalOrders.toLocaleString(),
       icon: ShoppingCart,
-      color: 'green',
-      trend: '+8%'
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50 dark:bg-purple-950/20'
     },
     {
-      title: 'Revenue',
-      value: `$${(stats?.monthlyRevenue || 0).toLocaleString()}`,
-      icon: DollarSign,
-      color: 'purple',
-      trend: '+15%'
+      title: 'Revenue (TSH)',
+      value: `${stats.monthlyRevenue.toLocaleString()}`,
+      icon: TrendingUp,
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-50 dark:bg-yellow-950/20'
     },
     {
-      title: 'Pending',
-      value: stats?.pendingApprovals || 0,
-      icon: AlertCircle,
-      color: 'orange',
-      trend: '-5%'
+      title: 'Pending Approvals',
+      value: stats.pendingApprovals.toLocaleString(),
+      icon: Eye,
+      color: 'text-red-600',
+      bgColor: 'bg-red-50 dark:bg-red-950/20'
+    },
+    {
+      title: 'Active Users',
+      value: stats.activeUsers.toLocaleString(),
+      icon: Star,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-50 dark:bg-indigo-950/20'
     }
-  ], [stats]);
+  ];
 
-  const exportData = async (type: string) => {
-    console.log(`Exporting ${type} data...`);
-  };
-
-  if (statsLoading) {
-    return <PageLoader isLoading={true} loadingText="Loading dashboard..." />;
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="h-8 bg-muted rounded mb-2"></div>
+                <div className="h-6 bg-muted rounded"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statsCards.map((stat, index) => {
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Dashboard Overview</h2>
+        <p className="text-muted-foreground">Monitor your ChapaMarket platform performance</p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.title} className="hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-10 h-10 bg-${stat.color}-100 dark:bg-${stat.color}-900/30 rounded-lg flex items-center justify-center`}>
-                      <Icon className={`h-5 w-5 text-${stat.color}-600`} />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">{stat.title}</p>
-                      <p className="text-2xl font-bold">{stat.value}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center text-green-600 text-sm">
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    {stat.trend}
-                  </div>
+            <Card key={stat.title} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.title}
+                </CardTitle>
+                <div className={`p-2 rounded-full ${stat.bgColor}`}>
+                  <Icon className={`h-4 w-4 ${stat.color}`} />
                 </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">{stat.value}</div>
               </CardContent>
             </Card>
           );
         })}
       </div>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Activity className="h-5 w-5 mr-2" />
-            Quick Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="hover:scale-105 transition-transform">
-              <Users className="h-4 w-4 mr-2" />
-              Manage Users
-            </Button>
-            <Button variant="outline" className="hover:scale-105 transition-transform">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Review Listings
-            </Button>
-            <Button variant="outline" className="hover:scale-105 transition-transform">
-              <DollarSign className="h-4 w-4 mr-2" />
-              View Orders
-            </Button>
-            <Button 
-              onClick={() => exportData('users')} 
-              variant="outline"
-              className="hover:scale-105 transition-transform"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export Data
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PageLoader isLoading={ordersLoading} loadingText="Loading recent orders...">
-            <div className="space-y-4">
-              {recentOrders?.map((order: any) => (
-                <div key={order.id} className="flex items-center space-x-3 p-3 bg-accent/50 rounded-lg hover:bg-accent/70 transition-colors">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">New order placed</p>
-                    <p className="text-xs text-muted-foreground">
-                      {order.livestock?.name} - ${order.total_amount}
-                    </p>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-              ))}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="text-sm text-muted-foreground">
+              • Use the sidebar to navigate between admin sections
             </div>
-          </PageLoader>
-        </CardContent>
-      </Card>
+            <div className="text-sm text-muted-foreground">
+              • All livestock, users, and stories can be managed from respective tabs
+            </div>
+            <div className="text-sm text-muted-foreground">
+              • Payment configuration is available in the Payment Config section
+            </div>
+            <div className="text-sm text-muted-foreground">
+              • Premium features can be enabled/disabled in Premium section
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>System Status</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Authentication</span>
+              <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs">
+                Active
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Database</span>
+              <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs">
+                Connected
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Payment System</span>
+              <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs">
+                Configured
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
