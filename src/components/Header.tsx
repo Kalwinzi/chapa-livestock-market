@@ -23,6 +23,14 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMenuOpen(false);
+  };
+
   return (
     <>
       <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b border-border">
@@ -37,18 +45,30 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
-              <a href="#home" className="text-foreground hover:text-primary transition-colors">
+              <button 
+                onClick={() => scrollToSection('home')}
+                className="text-foreground hover:text-primary transition-colors"
+              >
                 Home
-              </a>
-              <a href="#livestock" className="text-foreground hover:text-primary transition-colors">
-                Livestock
-              </a>
-              <a href="#stories" className="text-foreground hover:text-primary transition-colors">
+              </button>
+              <button 
+                onClick={() => scrollToSection('livestock')}
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                Market
+              </button>
+              <button 
+                onClick={() => scrollToSection('stories')}
+                className="text-foreground hover:text-primary transition-colors"
+              >
                 Stories
-              </a>
-              <a href="#premium" className="text-foreground hover:text-primary transition-colors">
+              </button>
+              <button 
+                onClick={() => scrollToSection('premium')}
+                className="text-foreground hover:text-primary transition-colors"
+              >
                 Premium
-              </a>
+              </button>
             </nav>
 
             {/* Desktop Actions */}
@@ -110,18 +130,30 @@ const Header = () => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-border">
               <nav className="flex flex-col space-y-4">
-                <a href="#home" className="text-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('home')}
+                  className="text-foreground hover:text-primary transition-colors text-left"
+                >
                   Home
-                </a>
-                <a href="#livestock" className="text-foreground hover:text-primary transition-colors">
-                  Livestock
-                </a>
-                <a href="#stories" className="text-foreground hover:text-primary transition-colors">
+                </button>
+                <button 
+                  onClick={() => scrollToSection('livestock')}
+                  className="text-foreground hover:text-primary transition-colors text-left"
+                >
+                  Market
+                </button>
+                <button 
+                  onClick={() => scrollToSection('stories')}
+                  className="text-foreground hover:text-primary transition-colors text-left"
+                >
                   Stories
-                </a>
-                <a href="#premium" className="text-foreground hover:text-primary transition-colors">
+                </button>
+                <button 
+                  onClick={() => scrollToSection('premium')}
+                  className="text-foreground hover:text-primary transition-colors text-left"
+                >
                   Premium
-                </a>
+                </button>
                 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
                   <Button

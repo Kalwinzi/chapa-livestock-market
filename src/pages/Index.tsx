@@ -1,21 +1,30 @@
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
-import AboutSection from '../components/AboutSection';
-import SearchSection from '../components/SearchSection';
-import CategoriesSection from '../components/CategoriesSection';
-import FeaturesSection from '../components/FeaturesSection';
-import FeaturedListings from '../components/FeaturedListings';
-import HowItWorksSimple from '../components/HowItWorksSimple';
-import PremiumSection from '../components/PremiumSection';
-import StoriesSection from '../components/StoriesSection';
-import TestimonialsSection from '../components/TestimonialsSection';
-import CallToActionSection from '../components/CallToActionSection';
-import PrivacyTermsSection from '../components/PrivacyTermsSection';
-import ContactUs from '../components/ContactUs';
-import Footer from '../components/Footer';
+
+// Lazy load other components to improve initial load time
+const AboutSection = React.lazy(() => import('../components/AboutSection'));
+const SearchSection = React.lazy(() => import('../components/SearchSection'));
+const CategoriesSection = React.lazy(() => import('../components/CategoriesSection'));
+const FeaturesSection = React.lazy(() => import('../components/FeaturesSection'));
+const FeaturedListings = React.lazy(() => import('../components/FeaturedListings'));
+const HowItWorksSimple = React.lazy(() => import('../components/HowItWorksSimple'));
+const PremiumSection = React.lazy(() => import('../components/PremiumSection'));
+const StoriesSection = React.lazy(() => import('../components/StoriesSection'));
+const TestimonialsSection = React.lazy(() => import('../components/TestimonialsSection'));
+const CallToActionSection = React.lazy(() => import('../components/CallToActionSection'));
+const PrivacyTermsSection = React.lazy(() => import('../components/PrivacyTermsSection'));
+const ContactUs = React.lazy(() => import('../components/ContactUs'));
+const Footer = React.lazy(() => import('../components/Footer'));
+
+// Loading component
+const SectionLoader = () => (
+  <div className="flex justify-center items-center py-16">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
 
 const Index = () => {
   usePerformanceMonitor('HomePage');
@@ -25,20 +34,46 @@ const Index = () => {
       <Header />
       <main className="relative">
         <HeroSection />
-        <AboutSection />
-        <SearchSection />
-        <CategoriesSection />
-        <FeaturesSection />
-        <FeaturedListings />
-        <HowItWorksSimple />
-        <PremiumSection />
-        <StoriesSection />
-        <TestimonialsSection />
-        <CallToActionSection />
-        <PrivacyTermsSection />
-        <ContactUs />
+        <Suspense fallback={<SectionLoader />}>
+          <AboutSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <SearchSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <CategoriesSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <FeaturesSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <FeaturedListings />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <HowItWorksSimple />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <PremiumSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <StoriesSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <TestimonialsSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <CallToActionSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <PrivacyTermsSection />
+        </Suspense>
+        <Suspense fallback={<SectionLoader />}>
+          <ContactUs />
+        </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={<SectionLoader />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };

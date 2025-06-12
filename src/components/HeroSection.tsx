@@ -1,18 +1,35 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowDown, MapPin, Users, Shield, Play, Search } from 'lucide-react';
+import { ArrowDown, MapPin, Users, Shield, Play } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const HeroSection = () => {
   const { t } = useTheme();
   const { elementRef: heroRef, isVisible: heroVisible } = useScrollAnimation<HTMLElement>();
+  const [heroImageUrl, setHeroImageUrl] = useState('/lovable-uploads/3c56169f-0372-418f-823a-8d738d0d35b2.png');
   const [animatedCounts, setAnimatedCounts] = useState({
     farmers: 0,
     livestock: 0,
     countries: 0
   });
+
+  useEffect(() => {
+    // Get homepage image from localStorage
+    const storedImage = localStorage.getItem('homepage_banner_url');
+    if (storedImage) {
+      setHeroImageUrl(storedImage);
+    }
+
+    // Listen for homepage image updates
+    const handleImageUpdate = (event: any) => {
+      setHeroImageUrl(event.detail.url);
+    };
+
+    window.addEventListener('homepageImageUpdated', handleImageUpdate);
+    return () => window.removeEventListener('homepageImageUpdated', handleImageUpdate);
+  }, []);
 
   useEffect(() => {
     const targets = { farmers: 25000, livestock: 150000, countries: 28 };
@@ -76,19 +93,19 @@ const HeroSection = () => {
             <div className="space-y-4">
               <div className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full text-sm font-medium border border-primary-200 dark:border-primary-800 animate-fade-in hover:scale-105 transition-transform">
                 <Shield className="w-4 h-4 mr-2" />
-                {t('hero.trusted')}
+                Trusted Platform
               </div>
               
               <h1 className={`text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight transition-all duration-1000 delay-200 ${
                 heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}>
-                <span className="gradient-text">{t('hero.title')}</span>
+                <span className="gradient-text">Africa's Livestock Market</span>
               </h1>
               
               <p className={`text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0 transition-all duration-1000 delay-400 ${
                 heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}>
-                {t('hero.subtitle')}
+                Connect farmers and buyers across Africa. Trade livestock with confidence and transparency.
               </p>
             </div>
             
@@ -99,7 +116,7 @@ const HeroSection = () => {
                 onClick={handleBrowseClick}
                 className="bg-primary-500 hover:bg-primary-600 text-white font-semibold text-lg px-8 py-4 group transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-lg"
               >
-                {t('hero.browse')}
+                Browse Livestock
                 <MapPin className="ml-2 h-5 w-5 group-hover:animate-pulse" />
               </Button>
               <Button 
@@ -107,7 +124,7 @@ const HeroSection = () => {
                 className="bg-transparent border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-semibold text-lg px-8 py-4 group transition-all duration-300 hover:scale-105 rounded-lg"
               >
                 <Play className="mr-2 h-5 w-5" />
-                {t('hero.demo')}
+                Learn More
               </Button>
             </div>
             
@@ -119,33 +136,33 @@ const HeroSection = () => {
                 <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.farmers.toLocaleString()}+
                 </div>
-                <div className="text-sm lg:text-base text-muted-foreground">{t('hero.farmers')}</div>
+                <div className="text-sm lg:text-base text-muted-foreground">Farmers</div>
               </div>
               <div className="text-center transform hover:scale-105 transition-transform duration-300">
                 <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.livestock.toLocaleString()}+
                 </div>
-                <div className="text-sm lg:text-base text-muted-foreground">{t('hero.livestock')}</div>
+                <div className="text-sm lg:text-base text-muted-foreground">Livestock</div>
               </div>
               <div className="text-center transform hover:scale-105 transition-transform duration-300">
                 <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.countries}
                 </div>
-                <div className="text-sm lg:text-base text-muted-foreground">{t('hero.countries')}</div>
+                <div className="text-sm lg:text-base text-muted-foreground">Countries</div>
               </div>
             </div>
           </div>
           
-          {/* Right Content - Hero Image with your uploaded livestock */}
+          {/* Right Content - Dynamic Hero Image */}
           <div className={`relative transition-all duration-1200 delay-300 ${
             heroVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
           }`}>
             <div className="relative animate-float">
-              {/* Main Image - Using your uploaded dairy cows image */}
+              {/* Main Image - Dynamic from admin settings */}
               <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
                 <img
-                  src="/lovable-uploads/3c56169f-0372-418f-823a-8d738d0d35b2.png"
-                  alt="Professional dairy cattle in modern farming facility - showcasing quality livestock"
+                  src={heroImageUrl}
+                  alt="Professional livestock farming - showcasing quality livestock"
                   className="w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center"
                   loading="lazy"
                 />

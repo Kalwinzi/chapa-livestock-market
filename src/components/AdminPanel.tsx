@@ -15,7 +15,7 @@ import NotificationsManagement from './admin/NotificationsManagement';
 import SettingsManagement from './admin/SettingsManagement';
 import AdminChatSystem from './admin/AdminChatSystem';
 import AdminReportsManagement from './admin/AdminReportsManagement';
-import HomepageBannerManager from './admin/HomepageBannerManager';
+import HomepageImageManager from './admin/HomepageImageManager';
 import PaymentConfigurationManager from './admin/PaymentConfigurationManager';
 import PremiumManagement from './admin/PremiumManagement';
 import SessionManagement from './admin/SessionManagement';
@@ -36,6 +36,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     switch (activeTab) {
       case 'dashboard':
         return <AdminDashboard />;
+      case 'homepage':
+        return <HomepageImageManager />;
       case 'users':
         return <EnhancedUserManagement />;
       case 'livestock':
@@ -49,7 +51,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
       case 'stories':
         return <StoriesManagement />;
       case 'banners':
-        return <HomepageBannerManager />;
+        return <HomepageImageManager />;
       case 'payment':
         return <PaymentConfigurationManager />;
       case 'reports':
