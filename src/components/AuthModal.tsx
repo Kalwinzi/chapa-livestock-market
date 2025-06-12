@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Facebook } from 'lucide-react';
-import { FaGoogle } from 'react-icons/fa';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -139,7 +137,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               onClick={() => handleSocialLogin('google')}
               disabled={loading}
             >
-              <FaGoogle className="h-4 w-4 mr-2" />
+              <span className="h-4 w-4 mr-2 text-blue-600 font-bold">G</span>
               Continue with Google
             </Button>
             <Button
