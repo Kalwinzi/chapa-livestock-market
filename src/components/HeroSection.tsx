@@ -105,7 +105,7 @@ const HeroSection = () => {
               <p className={`text-lg sm:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0 transition-all duration-1000 delay-400 ${
                 heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}>
-                Connect farmers and buyers across Africa. Trade livestock with confidence and transparency.
+                {t('hero.subtitle')}
               </p>
             </div>
             
@@ -116,7 +116,7 @@ const HeroSection = () => {
                 onClick={handleBrowseClick}
                 className="bg-primary-500 hover:bg-primary-600 text-white font-semibold text-lg px-8 py-4 group transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-lg"
               >
-                Browse Livestock
+                {t('hero.browse')}
                 <MapPin className="ml-2 h-5 w-5 group-hover:animate-pulse" />
               </Button>
               <Button 
@@ -136,19 +136,19 @@ const HeroSection = () => {
                 <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.farmers.toLocaleString()}+
                 </div>
-                <div className="text-sm lg:text-base text-muted-foreground">Farmers</div>
+                <div className="text-sm lg:text-base text-muted-foreground">{t('hero.farmers')}</div>
               </div>
               <div className="text-center transform hover:scale-105 transition-transform duration-300">
                 <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.livestock.toLocaleString()}+
                 </div>
-                <div className="text-sm lg:text-base text-muted-foreground">Livestock</div>
+                <div className="text-sm lg:text-base text-muted-foreground">{t('hero.livestock')}</div>
               </div>
               <div className="text-center transform hover:scale-105 transition-transform duration-300">
                 <div className="text-2xl lg:text-3xl xl:text-4xl font-bold text-primary-500 animate-pulse-soft">
                   {animatedCounts.countries}
                 </div>
-                <div className="text-sm lg:text-base text-muted-foreground">Countries</div>
+                <div className="text-sm lg:text-base text-muted-foreground">{t('hero.countries')}</div>
               </div>
             </div>
           </div>

@@ -102,7 +102,7 @@ const PremiumSection = () => {
                     Payment Instructions
                   </h4>
                   <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-3">
-                    Pay to this mobile number in Tanzania:
+                    Pay via mobile money to this Tanzania number:
                   </p>
                   <div className="flex items-center gap-2 p-3 bg-white dark:bg-gray-900 rounded border">
                     <span className="font-mono font-bold text-lg">+255 763 953 480</span>

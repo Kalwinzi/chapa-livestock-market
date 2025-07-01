@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { X, Wallet, CreditCard, CheckCircle } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { X, Wallet, CreditCard, CheckCircle, MessageCircle } from 'lucide-react';
 
 interface PiCoinPaymentProps {
   isOpen: boolean;
@@ -19,6 +20,11 @@ const PiCoinPayment: React.FC<PiCoinPaymentProps> = ({ isOpen, onClose, livestoc
   const [piCardNumber, setPiCardNumber] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const { t } = useTheme();
+
+  // Convert TSH to Pi Coin (1 Pi = 314,159 TZS)
+  const tshPrice = parseFloat(amount.replace(/[^\d]/g, '')) || 0;
+  const piPrice = (tshPrice / 314159).toFixed(4);
 
   const handlePayment = async () => {
     if (paymentMethod === 'wallet' && !piWalletAddress) {
@@ -57,19 +63,45 @@ const PiCoinPayment: React.FC<PiCoinPaymentProps> = ({ isOpen, onClose, livestoc
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-xl">Pay with Pi Coin</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20">
+          <CardTitle className="text-xl text-yellow-800 dark:text-yellow-200">{t('payment.picoin')}</CardTitle>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
             <X className="h-5 w-5" />
           </button>
         </CardHeader>
         <CardContent className="space-y-6">
           {livestock && (
-            <div className="bg-accent-50 dark:bg-accent-900/30 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
               <h3 className="font-semibold text-foreground">{livestock.name}</h3>
-              <p className="text-muted-foreground text-sm">Price: {amount}</p>
+              <div className="flex justify-between items-center mt-2">
+                <div>
+                  <p className="text-muted-foreground text-sm">TSH Price: {amount}</p>
+                  <p className="text-yellow-700 dark:text-yellow-300 font-bold">Pi Price: {piPrice} π</p>
+                </div>
+                <div className="text-right text-xs text-muted-foreground">
+                  <p>{t('payment.rate')}</p>
+                </div>
+              </div>
             </div>
           )}
+
+          {/* Contact for Payment Assistance */}
+          <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Payment Assistance</h4>
+            <p className="text-blue-700 dark:text-blue-300 text-sm mb-3">
+              Need help with Pi Coin payment? Contact our support team in Tanzania:
+            </p>
+            <div className="flex items-center gap-3">
+              <Button 
+                onClick={() => window.open(`https://wa.me/255763953480?text=I need help with Pi Coin payment for ${livestock?.name}`, '_blank')}
+                className="bg-green-600 hover:bg-green-700 text-white flex-1"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                {t('contact.whatsapp')}
+              </Button>
+              <span className="text-sm font-mono text-blue-800 dark:text-blue-200">{t('contact.phone')}</span>
+            </div>
+          </div>
 
           <div className="space-y-4">
             <div className="flex space-x-2">
