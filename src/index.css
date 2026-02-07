@@ -178,8 +178,58 @@ body, p, span, div {
   
   /* Premium gold theme */
   .premium-gold {
-    background: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary-gold)));
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(43 74% 50%));
     color: hsl(var(--accent-foreground));
+  }
+  
+  /* Gold gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Premium card glow */
+  .premium-glow {
+    box-shadow: 0 0 30px hsl(var(--accent) / 0.4), 
+                0 0 60px hsl(var(--accent) / 0.2),
+                inset 0 0 20px hsl(var(--accent) / 0.1);
+    border: 2px solid hsl(var(--accent) / 0.5);
+  }
+  
+  /* Gold shimmer effect */
+  .gold-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--accent) / 0.3) 0%,
+      hsl(var(--accent) / 0.8) 50%,
+      hsl(var(--accent) / 0.3) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+  
+  /* Floating animation */
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  /* Hover lift effect */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px hsl(var(--foreground) / 0.1);
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    background: hsl(var(--background) / 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
   
   /* Loading animations */
@@ -191,6 +241,14 @@ body, p, span, div {
     content: '';
     animation: dots 1.5s steps(5, end) infinite;
   }
+  
+  /* Stagger animation delays for children */
+  .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
 }
 
 @keyframes fadeIn {
