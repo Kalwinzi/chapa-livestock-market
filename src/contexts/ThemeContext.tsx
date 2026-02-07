@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
-type Language = 'en' | 'sw' | 'fr' | 'ar' | 'zh'; // English, Swahili, French, Arabic, Chinese
+type Language = 'en' | 'sw' | 'fr' | 'ar' | 'zh' | 'rw'; // English, Swahili, French, Arabic, Chinese, Kinyarwanda
 
 interface ThemeContextType {
   theme: Theme;
@@ -12,10 +12,10 @@ interface ThemeContextType {
   t: (key: string) => string;
 }
 
-const translations = {
+const translations: Record<Language, Record<string, string>> = {
   en: {
     'hero.title': 'Buy & Sell Premium Livestock Across East Africa',
-    'hero.subtitle': 'Connect with verified farmers and traders in Tanzania, Kenya, Uganda, Rwanda & Burundi. Pay with Pi Coin (1 Pi = $314,159).',
+    'hero.subtitle': 'Connect with verified farmers and traders in Tanzania, Kenya, Uganda, Rwanda & Burundi. Pay with Pi Coin (1 Pi = 314,159 TZS).',
     'hero.browse': 'Browse Livestock',
     'hero.demo': 'Watch Demo',
     'hero.farmers': 'Farmers Connected',
@@ -25,7 +25,7 @@ const translations = {
     'contact.phone': '+255 763 953 480',
     'contact.whatsapp': 'WhatsApp',
     'payment.picoin': 'Pay with Pi Coin',
-    'payment.rate': '1 Pi = $314,159',
+    'payment.rate': '1 Pi = 314,159 TZS',
     'nav.home': 'Home',
     'nav.search': 'Search',
     'nav.sell': 'Sell',
@@ -47,11 +47,14 @@ const translations = {
     'chapavet.title': 'ChapaVet AI Assistant',
     'chapavet.subtitle': 'Ask me about livestock health, feeding, and valuation',
     'admin.title': 'Admin Dashboard',
-    'balance': 'Pi Balance'
+    'balance': 'Pi Balance',
+    'coming.soon': 'Coming Soon',
+    'country.supported': 'Available',
+    'country.unsupported': 'Coming Soon'
   },
   sw: {
     'hero.title': 'Nunua na Uza Mifugo Bora Afrika Mashariki',
-    'hero.subtitle': 'Unganisha na wakulima na wafanyabiashara walioidhinishwa nchini Tanzania, Kenya, Uganda, Rwanda na Burundi. Lipa kwa Pi Coin (1 Pi = $314,159).',
+    'hero.subtitle': 'Unganisha na wakulima na wafanyabiashara walioidhinishwa nchini Tanzania, Kenya, Uganda, Rwanda na Burundi. Lipa kwa Pi Coin (1 Pi = 314,159 TZS).',
     'hero.browse': 'Tazama Mifugo',
     'hero.demo': 'Ona Onyesho',
     'hero.farmers': 'Wakulima Wameunganishwa',
@@ -61,7 +64,7 @@ const translations = {
     'contact.phone': '+255 763 953 480',
     'contact.whatsapp': 'WhatsApp',
     'payment.picoin': 'Lipa kwa Pi Coin',
-    'payment.rate': '1 Pi = $314,159',
+    'payment.rate': '1 Pi = 314,159 TZS',
     'nav.home': 'Nyumbani',
     'nav.search': 'Tafuta',
     'nav.sell': 'Uza',
@@ -83,11 +86,14 @@ const translations = {
     'chapavet.title': 'Msaidizi wa ChapaVet AI',
     'chapavet.subtitle': 'Niulize kuhusu afya ya mifugo, ulishaji, na tathmini',
     'admin.title': 'Dashibodi ya Msimamizi',
-    'balance': 'Salio la Pi'
+    'balance': 'Salio la Pi',
+    'coming.soon': 'Inakuja Hivi Karibuni',
+    'country.supported': 'Inapatikana',
+    'country.unsupported': 'Inakuja Hivi Karibuni'
   },
   fr: {
     'hero.title': 'Acheter et Vendre du Bétail Premium en Afrique de l\'Est',
-    'hero.subtitle': 'Connectez-vous avec des agriculteurs et commerçants vérifiés en Tanzanie, Kenya, Ouganda, Rwanda et Burundi. Payez avec Pi Coin (1 Pi = $314,159).',
+    'hero.subtitle': 'Connectez-vous avec des agriculteurs et commerçants vérifiés en Tanzanie, Kenya, Ouganda, Rwanda et Burundi. Payez avec Pi Coin (1 Pi = 314,159 TZS).',
     'hero.browse': 'Parcourir le Bétail',
     'hero.demo': 'Voir la Démo',
     'hero.farmers': 'Agriculteurs Connectés',
@@ -97,7 +103,7 @@ const translations = {
     'contact.phone': '+255 763 953 480',
     'contact.whatsapp': 'WhatsApp',
     'payment.picoin': 'Payer avec Pi Coin',
-    'payment.rate': '1 Pi = $314,159',
+    'payment.rate': '1 Pi = 314,159 TZS',
     'nav.home': 'Accueil',
     'nav.search': 'Rechercher',
     'nav.sell': 'Vendre',
@@ -119,11 +125,14 @@ const translations = {
     'chapavet.title': 'Assistant ChapaVet AI',
     'chapavet.subtitle': 'Demandez-moi à propos de la santé du bétail, de l\'alimentation et de l\'évaluation',
     'admin.title': 'Tableau de Bord Admin',
-    'balance': 'Solde Pi'
+    'balance': 'Solde Pi',
+    'coming.soon': 'Bientôt Disponible',
+    'country.supported': 'Disponible',
+    'country.unsupported': 'Bientôt Disponible'
   },
   ar: {
     'hero.title': 'شراء وبيع الماشية المتميزة في شرق أفريقيا',
-    'hero.subtitle': 'تواصل مع المزارعين والتجار المعتمدين في تنزانيا وكينيا وأوغندا ورواندا وبوروندي. ادفع بعملة Pi (1 Pi = $314,159).',
+    'hero.subtitle': 'تواصل مع المزارعين والتجار المعتمدين في تنزانيا وكينيا وأوغندا ورواندا وبوروندي. ادفع بعملة Pi (1 Pi = 314,159 TZS).',
     'hero.browse': 'تصفح الماشية',
     'hero.demo': 'مشاهدة العرض التوضيحي',
     'hero.farmers': 'المزارعون المتصلون',
@@ -133,7 +142,7 @@ const translations = {
     'contact.phone': '+255 763 953 480',
     'contact.whatsapp': 'واتساب',
     'payment.picoin': 'ادفع بعملة Pi',
-    'payment.rate': '1 Pi = $314,159',
+    'payment.rate': '1 Pi = 314,159 TZS',
     'nav.home': 'الرئيسية',
     'nav.search': 'بحث',
     'nav.sell': 'بيع',
@@ -155,11 +164,14 @@ const translations = {
     'chapavet.title': 'مساعد ChapaVet AI',
     'chapavet.subtitle': 'اسألني عن صحة الماشية والتغذية والتقييم',
     'admin.title': 'لوحة تحكم المدير',
-    'balance': 'رصيد Pi'
+    'balance': 'رصيد Pi',
+    'coming.soon': 'قريباً',
+    'country.supported': 'متاح',
+    'country.unsupported': 'قريباً'
   },
   zh: {
     'hero.title': '在东非买卖优质牲畜',
-    'hero.subtitle': '与坦桑尼亚、肯尼亚、乌干达、卢旺达和布隆迪的认证农民和贸易商联系。使用Pi币支付（1 Pi = $314,159）。',
+    'hero.subtitle': '与坦桑尼亚、肯尼亚、乌干达、卢旺达和布隆迪的认证农民和贸易商联系。使用Pi币支付（1 Pi = 314,159 TZS）。',
     'hero.browse': '浏览牲畜',
     'hero.demo': '观看演示',
     'hero.farmers': '已连接农民',
@@ -169,7 +181,7 @@ const translations = {
     'contact.phone': '+255 763 953 480',
     'contact.whatsapp': 'WhatsApp',
     'payment.picoin': '使用Pi币支付',
-    'payment.rate': '1 Pi = $314,159',
+    'payment.rate': '1 Pi = 314,159 TZS',
     'nav.home': '首页',
     'nav.search': '搜索',
     'nav.sell': '出售',
@@ -191,7 +203,49 @@ const translations = {
     'chapavet.title': 'ChapaVet AI助手',
     'chapavet.subtitle': '询问我关于牲畜健康、喂养和估值的问题',
     'admin.title': '管理员仪表板',
-    'balance': 'Pi余额'
+    'balance': 'Pi余额',
+    'coming.soon': '即将推出',
+    'country.supported': '可用',
+    'country.unsupported': '即将推出'
+  },
+  rw: {
+    'hero.title': 'Gura no Kugurisha Amatungo Meza muri Afurika y\'Iburasirazuba',
+    'hero.subtitle': 'Huza n\'abahinzi n\'abacuruzi bemejwe mu Rwanda, Tanzania, Kenya, Uganda na Burundi. Wishyura na Pi Coin (1 Pi = 314,159 TZS).',
+    'hero.browse': 'Reba Amatungo',
+    'hero.demo': 'Reba Demo',
+    'hero.farmers': 'Abahinzi Bahujwe',
+    'hero.livestock': 'Amatungo Yanditswe',
+    'hero.countries': 'Ibihugu',
+    'hero.trusted': 'Urubuga rw\'Amatungo Rwizewe muri Afurika y\'Iburasirazuba',
+    'contact.phone': '+255 763 953 480',
+    'contact.whatsapp': 'WhatsApp',
+    'payment.picoin': 'Ishyura na Pi Coin',
+    'payment.rate': '1 Pi = 314,159 TZS',
+    'nav.home': 'Ahabanza',
+    'nav.search': 'Shakisha',
+    'nav.sell': 'Gurisha',
+    'nav.market': 'Isoko',
+    'nav.learn': 'Iga',
+    'nav.profile': 'Umwirondoro',
+    'nav.about': 'Ibyacu',
+    'nav.features': 'Ibintu Bikora',
+    'nav.how': 'Uko Bikora',
+    'nav.contact': 'Twandikire',
+    'nav.signup': 'Iyandikishe',
+    'nav.list': 'Andika Amatungo Yawe',
+    'premium.unlock': 'Fungura Premium',
+    'learn.title': 'Kwita ku Matungo n\'Uburezi',
+    'learn.guides': 'Amabwiriza y\'Ubuvuzi',
+    'learn.disease': 'Kurinda Indwara',
+    'learn.ai': 'Umufasha wa AI w\'Ubuvuzi',
+    'learn.videos': 'Amasomo ya Video',
+    'chapavet.title': 'Umufasha ChapaVet AI',
+    'chapavet.subtitle': 'Mbaze ku buzima bw\'amatungo, ifunguro, n\'agaciro',
+    'admin.title': 'Ikibanza cy\'Umuyobozi',
+    'balance': 'Amafaranga ya Pi',
+    'coming.soon': 'Biraza Vuba',
+    'country.supported': 'Birahari',
+    'country.unsupported': 'Biraza Vuba'
   }
 };
 
@@ -229,7 +283,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations.en] || key;
+    return translations[language][key] || key;
   };
 
   return (
