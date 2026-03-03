@@ -1,0 +1,5 @@
+[functions.chapavet-ai]
+verify_jwt = false
+
+[functions.chapavet-health-check]
+verify_jwt = false
