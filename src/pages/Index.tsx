@@ -4,6 +4,7 @@ import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
 import ChapaVetAIChat from '../components/ChapaVetAIChat';
+import OnboardingTutorial from '../components/OnboardingTutorial';
 import AnimatedSection from '../components/AnimatedSection';
 
 // Lazy load other components to improve initial load time
@@ -121,6 +122,9 @@ const Index = () => {
       
       {/* ChapaVet AI Floating Chat */}
       <ChapaVetAIChat />
+      
+      {/* Onboarding Tutorial for new users */}
+      <OnboardingTutorial />
     </div>
   );
 };

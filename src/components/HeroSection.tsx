@@ -164,7 +164,8 @@ const HeroSection = () => {
                 <img
                   src={heroImageUrl}
                   alt="Healthy cow – Chapa Market Livestock"
-                  className={`w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  className={`w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center transition-all duration-1000 ${imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+                  style={{ animation: imageLoaded ? 'heroBreath 6s ease-in-out infinite' : 'none' }}
                   loading="eager"
                   fetchPriority="high"
                   onLoad={() => setImageLoaded(true)}

@@ -356,3 +356,9 @@ body, p, span, div {
 .will-change-auto {
   will-change: auto;
 }
+
+/* Hero image subtle breathing animation */
+@keyframes heroBreath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
