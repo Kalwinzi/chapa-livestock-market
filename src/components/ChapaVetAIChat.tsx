@@ -103,6 +103,7 @@ const ChapaVetAIChat: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<AIMode>('chat');
+  const [hasShownWelcome, setHasShownWelcome] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { language, t } = useTheme();
   const { toast } = useToast();
@@ -112,6 +113,22 @@ const ChapaVetAIChat: React.FC = () => {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Auto-show welcome message after page load
+  useEffect(() => {
+    if (hasShownWelcome) return;
+    const timer = setTimeout(() => {
+      setHasShownWelcome(true);
+      setIsOpen(true);
+      setMessages([{
+        role: 'assistant',
+        content: language === 'sw' 
+          ? '🐄 Karibu Chapa Market! Jukwaa lako la kuaminika la kununua na kuuza mifugo. Ninaweza kukusaidia na bei, afya ya mifugo, au kukuongoza kwenye jukwaa. Uliza chochote!'
+          : '🐄 Welcome to Chapa Market – Your trusted platform for buying and selling livestock across Africa!\n\nI\'m **ChapaVet AI**, your intelligent assistant. I can help you with:\n- 💰 **Livestock pricing** predictions\n- 🩺 **Animal health** diagnostics\n- 🛡️ **Fraud detection** for safe trading\n- 📋 **Platform guidance** for new users\n\nHow can I help you today?'
+      }]);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [hasShownWelcome, language]);
 
   const handleError = (status: number) => {
     if (status === 429) {

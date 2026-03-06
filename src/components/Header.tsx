@@ -158,12 +158,12 @@ const Header = () => {
                   </span>
                   {isAdmin && (
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant="ghost"
+                      size="icon"
                       onClick={() => setIsAdminPanelOpen(true)}
+                      title="Admin Dashboard"
                     >
-                      <Settings className="h-4 w-4 mr-2" />
-                      {t('admin.title')}
+                      <Settings className="h-4 w-4" />
                     </Button>
                   )}
                   <Button
@@ -251,17 +251,17 @@ const Header = () => {
                   
                   {user ? (
                     <div className="flex flex-col space-y-2">
-                      {isAdmin && (
+                    {isAdmin && (
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => {
                             setIsAdminPanelOpen(true);
                             setIsMenuOpen(false);
                           }}
+                          title="Admin Dashboard"
                         >
-                          <Settings className="h-4 w-4 mr-2" />
-                          {t('admin.title')}
+                          <Settings className="h-4 w-4" />
                         </Button>
                       )}
                       <Button
