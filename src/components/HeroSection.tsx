@@ -8,7 +8,8 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 const HeroSection = () => {
   const { t } = useTheme();
   const { elementRef: heroRef, isVisible: heroVisible } = useScrollAnimation<HTMLElement>();
-  const [heroImageUrl, setHeroImageUrl] = useState('/lovable-uploads/3c56169f-0372-418f-823a-8d738d0d35b2.png');
+  const [heroImageUrl, setHeroImageUrl] = useState('/images/hero-cow.jpg');
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [animatedCounts, setAnimatedCounts] = useState({
     farmers: 0,
     livestock: 0,
@@ -162,9 +163,11 @@ const HeroSection = () => {
               <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
                 <img
                   src={heroImageUrl}
-                  alt="Professional livestock farming - showcasing quality livestock"
-                  className="w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center"
-                  loading="lazy"
+                  alt="Healthy cow – Chapa Market Livestock"
+                  className={`w-full h-64 sm:h-80 lg:h-96 xl:h-[500px] object-cover object-center transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  loading="eager"
+                  fetchPriority="high"
+                  onLoad={() => setImageLoaded(true)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
               </div>
