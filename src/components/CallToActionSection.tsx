@@ -5,7 +5,7 @@ import { ArrowRight, Download, Users } from 'lucide-react';
 
 const CallToActionSection = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-sage-600 via-sage-700 to-earth-600 relative overflow-hidden">
+    <section id="sell" className="py-20 bg-gradient-to-br from-sage-600 via-sage-700 to-earth-600 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-32 h-32 bg-gold-400 rounded-full"></div>

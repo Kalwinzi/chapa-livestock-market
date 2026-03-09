@@ -103,7 +103,7 @@ const ChapaVetAIChat: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<AIMode>('chat');
-  const [hasShownWelcome, setHasShownWelcome] = useState(false);
+  const [isFirstMessage, setIsFirstMessage] = useState(true);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { language, t } = useTheme();
   const { toast } = useToast();
@@ -113,22 +113,6 @@ const ChapaVetAIChat: React.FC = () => {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
-
-  // Auto-show welcome message after page load
-  useEffect(() => {
-    if (hasShownWelcome) return;
-    const timer = setTimeout(() => {
-      setHasShownWelcome(true);
-      setIsOpen(true);
-      setMessages([{
-        role: 'assistant',
-        content: language === 'sw' 
-          ? '🐄 Karibu Chapa Market! Jukwaa lako la kuaminika la kununua na kuuza mifugo. Ninaweza kukusaidia na bei, afya ya mifugo, au kukuongoza kwenye jukwaa. Uliza chochote!'
-          : '🐄 Welcome to Chapa Market – Your trusted platform for buying and selling livestock across Africa!\n\nI\'m **ChapaVet AI**, your intelligent assistant. I can help you with:\n- 💰 **Livestock pricing** predictions\n- 🩺 **Animal health** diagnostics\n- 🛡️ **Fraud detection** for safe trading\n- 📋 **Platform guidance** for new users\n\nHow can I help you today?'
-      }]);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [hasShownWelcome, language]);
 
   const handleError = (status: number) => {
     if (status === 429) {
@@ -214,6 +198,25 @@ const ChapaVetAIChat: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     const userMessage: Message = { role: 'user', content: input.trim() };
+    
+    // On first message, prepend a welcome response before processing
+    if (isFirstMessage) {
+      setIsFirstMessage(false);
+      const welcomeMessage: Message = {
+        role: 'assistant',
+        content: language === 'sw'
+          ? '🐄 Karibu Chapa Market! Niko hapa kukusaidia kununua au kuuza mifugo na kukuongoza kwenye jukwaa. Hebu nijibu swali lako...'
+          : '🐄 Welcome to Chapa Market! I\'m here to help you buy or sell livestock and guide you through the platform. Let me answer your question...'
+      };
+      const newMessages = [welcomeMessage, userMessage];
+      setMessages(newMessages);
+      setInput('');
+      setIsLoading(true);
+      await streamChat(newMessages);
+      setIsLoading(false);
+      return;
+    }
+    
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput('');

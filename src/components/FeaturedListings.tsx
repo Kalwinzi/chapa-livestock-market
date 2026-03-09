@@ -45,7 +45,7 @@ const FeaturedListings = () => {
   };
 
   return (
-    <section id="listings" className="py-16 bg-accent-50 dark:bg-gray-900/50">
+    <section id="livestock" className="py-16 bg-accent-50 dark:bg-gray-900/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 
