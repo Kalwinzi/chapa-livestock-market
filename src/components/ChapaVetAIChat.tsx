@@ -198,6 +198,25 @@ const ChapaVetAIChat: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     const userMessage: Message = { role: 'user', content: input.trim() };
+    
+    // On first message, prepend a welcome response before processing
+    if (isFirstMessage) {
+      setIsFirstMessage(false);
+      const welcomeMessage: Message = {
+        role: 'assistant',
+        content: language === 'sw'
+          ? '🐄 Karibu Chapa Market! Niko hapa kukusaidia kununua au kuuza mifugo na kukuongoza kwenye jukwaa. Hebu nijibu swali lako...'
+          : '🐄 Welcome to Chapa Market! I\'m here to help you buy or sell livestock and guide you through the platform. Let me answer your question...'
+      };
+      const newMessages = [welcomeMessage, userMessage];
+      setMessages(newMessages);
+      setInput('');
+      setIsLoading(true);
+      await streamChat(newMessages);
+      setIsLoading(false);
+      return;
+    }
+    
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput('');
